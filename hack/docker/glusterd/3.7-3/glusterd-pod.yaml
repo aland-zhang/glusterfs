@@ -1,0 +1,46 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: gluster0
+  labels:
+    app: glusterfs-server
+spec:
+  containers:
+    - name: gluster-container
+      image: docker.appscode.com/glusterd:3.7-3
+      securityContext:
+        capabilities:
+          add:
+            - SYS_ADMIN
+      ports:
+        - name: port1
+          containerPort: 111
+        - name: port2
+          containerPort: 24007
+        - name: port3
+          containerPort: 49152
+        - name: port4
+          containerPort: 49153
+        - name: port5
+          containerPort: 49154
+        - name: port6
+          containerPort: 49155
+        - name: port7
+          containerPort: 38465
+        - name: port8
+          containerPort: 38466
+        - name: port9
+          containerPort: 38467
+        - name: port10
+          containerPort: 1110
+        - name: port11
+          containerPort: 2049
+        - name: port12
+          containerPort: 24007
+      volumeMounts:
+        - mountPath: /gfs-store
+          name: gluster-storage
+  volumes:
+    - name: gluster-storage
+      emptyDir:
+        medium: ""
