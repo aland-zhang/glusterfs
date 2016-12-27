@@ -1,5 +1,5 @@
-hash: b97d73de666cd4a7e2bf375ab85791a66b9abdce2251c275e1da32322b41259b
-updated: 2016-12-22T19:56:03.12361514-08:00
+hash: f72d30de1cd9dd0d1d2d5baebce5feabb10e96e074d0f51d611f4767dbae8b73
+updated: 2016-12-27T12:18:45.058905104-08:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -9,13 +9,13 @@ imports:
 - name: github.com/appscode/errors
   version: 2a1d40bce2b635108dc8710c6fbd6e2c6d7ed68d
 - name: github.com/appscode/go
-  version: e4fbcc3a0701bf3d35164fb72ba2cdeda2010a5b
+  version: 7995bcb0419b6ed977ca66d4482c3a625847270e
   subpackages:
   - crypto/rand
   - hold
   - version
 - name: github.com/appscode/k8s-addons
-  version: 6ee4badc6608343602a15115c2087d11f36f6efa
+  version: 05da01ad537cf3fbc57257425a71908ac249b2a8
   subpackages:
   - pkg/election
   - pkg/stash
@@ -49,8 +49,6 @@ imports:
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
   subpackages:
   - spew
-- name: github.com/dgrijalva/jwt-go
-  version: 01aeca54ebda6e0fbfafd0a524d234159c05ec20
 - name: github.com/docker/distribution
   version: cd27f179f2c10c5d300e6d09025b538c475b0d51
   subpackages:
@@ -68,28 +66,6 @@ imports:
   - pkg/system
   - pkg/term
   - pkg/term/windows
-- name: github.com/docker/engine-api
-  version: dea108d3aa0c67d7162a3fd8aa65f38a430019fd
-  subpackages:
-  - client
-  - client/transport
-  - client/transport/cancellable
-  - types
-  - types/blkiodev
-  - types/container
-  - types/filters
-  - types/network
-  - types/reference
-  - types/registry
-  - types/strslice
-  - types/time
-  - types/versions
-- name: github.com/docker/go-connections
-  version: f549a9393d05688dff0992ef3efd8bbe6c628aeb
-  subpackages:
-  - nat
-  - sockets
-  - tlsconfig
 - name: github.com/docker/go-units
   version: 0bbddae09c5a5419a8c6dcdd7ff90da3d450393b
 - name: github.com/docker/spdystream
@@ -101,10 +77,6 @@ imports:
   subpackages:
   - log
   - swagger
-- name: github.com/evanphx/json-patch
-  version: 465937c80b3c07a7c7ad20cc934898646a91c1de
-- name: github.com/exponent-io/jsonpath
-  version: d6023ce2651d8eafb5c75bb0c7167536102ec9f5
 - name: github.com/facebookgo/stack
   version: d9d227395bc3d7a635388c75b2e3b3a750e11888
 - name: github.com/ghodss/yaml
@@ -191,9 +163,9 @@ imports:
 - name: github.com/Sirupsen/logrus
   version: 51fe59aca108dc5680109e7b2051cbdcfa5a253c
 - name: github.com/spf13/cobra
-  version: f62e98d28ab7ad31d707ba837a966378465c7b57
+  version: 9c28e4bbd74e5c3ed7aacbc552b2cab7cfdfe744
 - name: github.com/spf13/pflag
-  version: 5ccb023bc27df288a957c5e994cd44fd19619465
+  version: c7e63cf4530bcd3ba943729cee0efeff2ebea63f
 - name: github.com/ugorji/go
   version: f1f1a805ed361a0e078bb537e4ea78cd37dcf065
   subpackages:
@@ -272,30 +244,14 @@ imports:
 - name: k8s.io/kubernetes
   version: 5f332aab13e58173f85fd204a2c77731f7a2573f
   subpackages:
-  - federation/apis/federation
-  - federation/apis/federation/install
-  - federation/apis/federation/v1beta1
-  - federation/client/clientset_generated/federation_internalclientset
-  - federation/client/clientset_generated/federation_internalclientset/typed/core/internalversion
-  - federation/client/clientset_generated/federation_internalclientset/typed/extensions/internalversion
-  - federation/client/clientset_generated/federation_internalclientset/typed/federation/internalversion
   - pkg/api
-  - pkg/api/annotations
-  - pkg/api/endpoints
   - pkg/api/errors
-  - pkg/api/events
   - pkg/api/install
   - pkg/api/meta
   - pkg/api/meta/metatypes
-  - pkg/api/pod
   - pkg/api/resource
-  - pkg/api/rest
-  - pkg/api/service
   - pkg/api/unversioned
-  - pkg/api/unversioned/validation
-  - pkg/api/util
   - pkg/api/v1
-  - pkg/api/validation
   - pkg/api/validation/path
   - pkg/apimachinery
   - pkg/apimachinery/announced
@@ -325,7 +281,6 @@ imports:
   - pkg/apis/extensions
   - pkg/apis/extensions/install
   - pkg/apis/extensions/v1beta1
-  - pkg/apis/extensions/validation
   - pkg/apis/policy
   - pkg/apis/policy/install
   - pkg/apis/policy/v1beta1
@@ -334,11 +289,8 @@ imports:
   - pkg/apis/rbac/v1alpha1
   - pkg/apis/storage
   - pkg/apis/storage/install
-  - pkg/apis/storage/util
   - pkg/apis/storage/v1beta1
-  - pkg/auth/authenticator
   - pkg/auth/user
-  - pkg/capabilities
   - pkg/client/cache
   - pkg/client/clientset_generated/internalclientset
   - pkg/client/clientset_generated/internalclientset/typed/apps/internalversion
@@ -357,35 +309,24 @@ imports:
   - pkg/client/metrics
   - pkg/client/record
   - pkg/client/restclient
-  - pkg/client/retry
   - pkg/client/transport
   - pkg/client/typed/discovery
-  - pkg/client/typed/dynamic
-  - pkg/client/unversioned
   - pkg/client/unversioned/auth
   - pkg/client/unversioned/clientcmd
   - pkg/client/unversioned/clientcmd/api
   - pkg/client/unversioned/clientcmd/api/latest
   - pkg/client/unversioned/clientcmd/api/v1
   - pkg/client/unversioned/remotecommand
-  - pkg/controller
-  - pkg/controller/deployment/util
   - pkg/conversion
   - pkg/conversion/queryparams
-  - pkg/credentialprovider
-  - pkg/fieldpath
   - pkg/fields
   - pkg/genericapiserver/openapi/common
   - pkg/httplog
-  - pkg/kubectl
-  - pkg/kubectl/cmd/util
-  - pkg/kubectl/resource
   - pkg/kubelet/qos
   - pkg/kubelet/server/remotecommand
   - pkg/kubelet/types
   - pkg/labels
   - pkg/master/ports
-  - pkg/registry/extensions/thirdpartyresourcedata
   - pkg/runtime
   - pkg/runtime/serializer
   - pkg/runtime/serializer/json
@@ -393,12 +334,7 @@ imports:
   - pkg/runtime/serializer/recognizer
   - pkg/runtime/serializer/streaming
   - pkg/runtime/serializer/versioning
-  - pkg/security/apparmor
-  - pkg/security/podsecuritypolicy/seccomp
-  - pkg/security/podsecuritypolicy/util
   - pkg/selection
-  - pkg/serviceaccount
-  - pkg/storage
   - pkg/types
   - pkg/util
   - pkg/util/cert
@@ -407,10 +343,8 @@ imports:
   - pkg/util/diff
   - pkg/util/errors
   - pkg/util/exec
-  - pkg/util/flag
   - pkg/util/flowcontrol
   - pkg/util/framer
-  - pkg/util/hash
   - pkg/util/homedir
   - pkg/util/httpstream
   - pkg/util/httpstream/spdy
@@ -421,14 +355,10 @@ imports:
   - pkg/util/jsonpath
   - pkg/util/labels
   - pkg/util/net
-  - pkg/util/net/sets
-  - pkg/util/node
   - pkg/util/parsers
-  - pkg/util/pod
   - pkg/util/rand
   - pkg/util/runtime
   - pkg/util/sets
-  - pkg/util/slice
   - pkg/util/strategicpatch
   - pkg/util/term
   - pkg/util/uuid

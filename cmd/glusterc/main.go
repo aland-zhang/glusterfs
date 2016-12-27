@@ -6,16 +6,15 @@ import (
 	"time"
 
 	_ "github.com/appscode/glusterfs/pkg/controller"
-	rand "github.com/appscode/go/crypto/rand"
+	"github.com/appscode/go/crypto/rand"
 	"github.com/appscode/go/hold"
 	v "github.com/appscode/go/version"
 	"github.com/appscode/k8s-addons/pkg/election"
 	"github.com/appscode/log"
 	logs "github.com/appscode/log/golog"
 	"github.com/spf13/pflag"
-	client "k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
-	"k8s.io/kubernetes/pkg/client/restclient"
-	kubectl_util "k8s.io/kubernetes/pkg/kubectl/cmd/util"
+	clientset "k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
+	"k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
 )
 
 var (
@@ -51,10 +50,12 @@ func init() {
 var (
 	flags = pflag.NewFlagSet(`glusterc --election=<name>`, pflag.ExitOnError)
 
+	master     = flags.String("master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
+	kubeConfig = flags.String("kubeconfig", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+
 	name      = flags.String("election", "", "The name of the election")
 	namespace = flags.String("namespace", "appscode", "The Kubernetes namespace for this election")
 	ttl       = flags.Duration("ttl", 10*time.Second, "The TTL for this election")
-	inCluster = flags.Bool("incluster", true, "Should this request use cluster credentials")
 	task      = flags.String("task", "", "Leader tasks to run")
 )
 
@@ -62,21 +63,28 @@ var (
 	currentPodId = rand.Characters(13)
 )
 
-func makeClient() (client.Interface, error) {
-	var cfg *restclient.Config
-	var err error
+func main() {
+	flags.AddGoFlagSet(flag.CommandLine)
+	flags.Parse(os.Args[1:])
+	flags.VisitAll(func(flag *pflag.Flag) {
+		log.Infof("FLAG: --%s=%q", flag.Name, flag.Value)
+	})
+	validateFlags()
 
-	if *inCluster {
-		if cfg, err = restclient.InClusterConfig(); err != nil {
-			return nil, err
-		}
-	} else {
-		clientConfig := kubectl_util.DefaultClientConfig(flags)
-		if cfg, err = clientConfig.ClientConfig(); err != nil {
-			return nil, err
-		}
+	logs.InitLogs()
+	defer logs.FlushLogs()
+
+	c, err := clientcmd.BuildConfigFromFlags(*master, *kubeConfig)
+	if err != nil {
+		log.Fatalf("error connecting to the client: %v", err)
 	}
-	return client.NewForConfig(cfg)
+
+	e, err := election.NewElection(*name, currentPodId, *namespace, *ttl, Task, clientset.NewForConfigOrDie(c))
+	if err != nil {
+		log.Fatalf("failed to create election: %v", err)
+	}
+	go election.RunElection(e)
+	hold.Hold()
 }
 
 func validateFlags() {
@@ -86,26 +94,6 @@ func validateFlags() {
 	if len(*name) == 0 {
 		log.Fatal("--election cannot be empty")
 	}
-}
-
-func main() {
-	flags.AddGoFlagSet(flag.CommandLine)
-	flags.Parse(os.Args)
-	validateFlags()
-	logs.InitLogs()
-	defer logs.FlushLogs()
-
-	kubeClient, err := makeClient()
-	if err != nil {
-		log.Fatalf("error connecting to the client: %v", err)
-	}
-
-	e, err := election.NewElection(*name, currentPodId, *namespace, *ttl, Task, kubeClient)
-	if err != nil {
-		log.Fatalf("failed to create election: %v", err)
-	}
-	go election.RunElection(e)
-	hold.Hold()
 }
 
 func Task(leaderId string) {
