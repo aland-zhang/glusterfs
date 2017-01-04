@@ -1,5 +1,5 @@
 hash: f72d30de1cd9dd0d1d2d5baebce5feabb10e96e074d0f51d611f4767dbae8b73
-updated: 2016-12-27T12:18:45.058905104-08:00
+updated: 2017-01-04T05:38:07.902634993-08:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -7,20 +7,20 @@ imports:
   - compute/metadata
   - internal
 - name: github.com/appscode/errors
-  version: 2a1d40bce2b635108dc8710c6fbd6e2c6d7ed68d
+  version: 6a668ba07d02064c06707b7d8b0f5239db707045
 - name: github.com/appscode/go
-  version: 7995bcb0419b6ed977ca66d4482c3a625847270e
+  version: a7f716de7a1373d1e8a5b31728166ada8e7595c6
   subpackages:
   - crypto/rand
   - hold
   - version
 - name: github.com/appscode/k8s-addons
-  version: 05da01ad537cf3fbc57257425a71908ac249b2a8
+  version: 33355decdcfd7223715907341bac88c2106834a9
   subpackages:
   - pkg/election
   - pkg/stash
 - name: github.com/appscode/log
-  version: 3f1acdeb89863d101e1d5fc0fefb478b1e990b28
+  version: 68e0e42e42c01371f3950571fc87c2298a51dd8f
   subpackages:
   - golog
 - name: github.com/Azure/go-ansiterm
