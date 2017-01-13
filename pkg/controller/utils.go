@@ -8,11 +8,11 @@ import (
 	"github.com/appscode/log"
 )
 
-func firstController(m map[string]string) (bool, *ControllerSpecs) {
+func firstController(m map[string]string) (bool, *GlusterControllerSpec) {
 	val, ok := m[glusterFSClusterControllerData]
 	log.Infoln("first controller status --", !ok)
 	if ok {
-		specs := &ControllerSpecs{}
+		specs := &GlusterControllerSpec{}
 		err := json.Unmarshal([]byte(val), specs)
 		if err == nil {
 			return false, specs

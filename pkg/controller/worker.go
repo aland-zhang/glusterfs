@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"net"
 	"strings"
 	"time"
 
@@ -55,9 +56,10 @@ func (g *GlusterFSController) reconfig() {
 	endpoint, err := g.KubeClient.Core().Endpoints(g.PodNamespace).Get(g.ElectionId)
 	if err == nil {
 		peers := g.loadPeers()
+		g.resolvesPTRRecords()
 		if ok, spec := firstController(endpoint.Annotations); !ok {
 			g.count = spec.ReplicaCount
-			added, removed := reConfig(peers, spec)
+			added, removed := g.reConfig(peers, spec)
 			log.Infoln("reconfig returned added", len(added), "removed", len(removed))
 			if len(added) > 0 || len(removed) > 0 {
 				log.Infoln("someone changed in cluster, needs to update and reconnect")
@@ -71,39 +73,57 @@ func (g *GlusterFSController) reconfig() {
 	log.Infoln("reconfig done returnung to caller, releasing lock")
 }
 
-func (g *GlusterFSController) loadPeers() []kapi.Pod {
-	pods, err := g.KubeClient.Core().Pods(g.PodNamespace).List(kapi.ListOptions{
-		LabelSelector: g.selector(),
-	})
-
-	if err != nil {
-		log.Infoln("pod list encountered with error ", err, " not running, waiting to start")
-		time.Sleep(time.Second * 20)
-		return g.loadPeers()
-	}
-
-	if len(pods.Items) <= 0 {
-		log.Infoln("pod list has zero items, that is not possible, should wait for all pods to be created")
-		time.Sleep(time.Second * 20)
-		return g.loadPeers()
-	}
-
-	for _, pod := range pods.Items {
-		if pod.Status.Phase != kapi.PodRunning || pod.Status.PodIP == "" {
-			// This pod do not contain any podIP or not running yet. So this can't add to
-			// gluster peer. Wait for pod to get an IP
-			// this could wait infinite time if any pod from this cluster goes to NotRunning States.
-			log.Infoln("pod with name ", pod.Name, " not running, waiting to start")
-			time.Sleep(time.Second * 20)
-			return g.loadPeers()
+func (g *GlusterFSController) resolvesPTRRecords() {
+	pod, err := g.KubeClient.Core().Pods(g.PodNamespace).Get(g.PodName)
+	if err == nil {
+		fqdn := g.podFQDN(*pod)
+		answer, _ := net.LookupAddr(pod.Status.PodIP)
+		if len(answer) > 0 {
+			for _, domain := range answer {
+				if domain == fqdn {
+					g.supportPTRRecords = true
+					return
+				}
+			}
 		}
 	}
-	log.Infoln("got all pods with its associated ip, totaling", len(pods.Items))
-	return pods.Items
+}
+
+func (g *GlusterFSController) loadPeers() []kapi.Pod {
+	for {
+		pods, err := g.KubeClient.Core().Pods(g.PodNamespace).List(kapi.ListOptions{
+			LabelSelector: g.selector(),
+		})
+
+		if err != nil {
+			log.Infoln("pod list encountered with error ", err, " not running, waiting to start")
+			time.Sleep(time.Second * 20)
+			continue
+		}
+
+		if len(pods.Items) <= 0 {
+			log.Infoln("pod list has zero items, that is not possible, should wait for all pods to be created")
+			time.Sleep(time.Second * 20)
+			continue
+		}
+
+		for _, pod := range pods.Items {
+			if pod.Status.Phase != kapi.PodRunning || pod.Status.PodIP == "" {
+				// This pod do not contain any podIP or not running yet. So this can't add to
+				// gluster peer. Wait for pod to get an IP
+				// this could wait infinite time if any pod from this cluster goes to NotRunning States.
+				log.Infoln("pod with name ", pod.Name, " not running, waiting to start")
+				time.Sleep(time.Second * 20)
+				continue
+			}
+		}
+		log.Infoln("got all pods with its associated ip, totaling", len(pods.Items))
+		return pods.Items
+	}
 }
 
 func (g *GlusterFSController) updateSpecs(peers []kapi.Pod) error {
-	specs := &ControllerSpecs{
+	specs := &GlusterControllerSpec{
 		ReplicaCount:   len(peers),
 		ControllerName: g.ID,
 		Election:       g.ElectionId,
@@ -112,8 +132,10 @@ func (g *GlusterFSController) updateSpecs(peers []kapi.Pod) error {
 
 	for _, peer := range peers {
 		id := IDSpecs{
-			Name: peer.Name + "/" + peer.Namespace,
-			IP:   peer.Status.PodIP,
+			Name:     peer.Name + "/" + peer.Namespace,
+			HostName: peer.Spec.Hostname,
+			IP:       peer.Status.PodIP,
+			FQDN:     g.podAddress(peer),
 		}
 		specs.Peer = append(specs.Peer, id)
 	}
@@ -138,7 +160,7 @@ func (g *GlusterFSController) updateSpecEndpoint(data string) error {
 	return errors.New().WithCause(err).Internal()
 }
 
-func reConfig(p []kapi.Pod, s *ControllerSpecs) ([]kapi.Pod, []kapi.Pod) {
+func (g *GlusterFSController) reConfig(p []kapi.Pod, s *GlusterControllerSpec) ([]kapi.Pod, []kapi.Pod) {
 	addedPeers := make([]kapi.Pod, 0)
 	removedPeers := make([]kapi.Pod, 0)
 
@@ -146,7 +168,7 @@ func reConfig(p []kapi.Pod, s *ControllerSpecs) ([]kapi.Pod, []kapi.Pod) {
 	for _, oldPeers := range s.Peer {
 		found := false
 		for _, peer := range p {
-			if peer.Status.PodIP == oldPeers.IP {
+			if g.podAddress(peer) == oldPeers.FQDN {
 				found = true
 				break
 			}
@@ -159,6 +181,9 @@ func reConfig(p []kapi.Pod, s *ControllerSpecs) ([]kapi.Pod, []kapi.Pod) {
 					Name:      name,
 					Namespace: namespace,
 				},
+				Spec: kapi.PodSpec{
+					Hostname: oldPeers.HostName,
+				},
 				Status: kapi.PodStatus{
 					PodIP: oldPeers.IP,
 				},
@@ -170,7 +195,7 @@ func reConfig(p []kapi.Pod, s *ControllerSpecs) ([]kapi.Pod, []kapi.Pod) {
 	for _, newPeer := range p {
 		found := false
 		for _, peer := range s.Peer {
-			if peer.IP == newPeer.Status.PodIP {
+			if peer.FQDN == g.podAddress(newPeer) {
 				found = true
 				break
 			}
@@ -181,4 +206,8 @@ func reConfig(p []kapi.Pod, s *ControllerSpecs) ([]kapi.Pod, []kapi.Pod) {
 		}
 	}
 	return addedPeers, removedPeers
+}
+
+func (g *GlusterFSController) podFQDN(pod kapi.Pod) string {
+	return pod.Name + "." + pod.Spec.Hostname + "." + pod.Namespace + ".svc." + g.clusterDomain
 }

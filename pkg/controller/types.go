@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/appscode/glusterfs/pkg/env"
-	"github.com/appscode/k8s-addons/pkg/election"
 	"github.com/appscode/log"
 	clientset "k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
 	rest "k8s.io/kubernetes/pkg/client/restclient"
@@ -14,22 +13,20 @@ import (
 	"k8s.io/kubernetes/pkg/util/sets"
 )
 
-func init() {
-	election.SetTask("glusterfs", newGlusterFSControllerTask())
-}
-
 type GlusterFSController struct {
 	ID         string
 	ElectionId string
 
-	PodName      string
-	PodNamespace string
-	GlusterFS    string
-	Selector     labels.Selector
-	Size         int
-	count        int
+	PodName           string
+	PodNamespace      string
+	GlusterFS         string
+	Selector          labels.Selector
+	Size              int
+	count             int
+	supportPTRRecords bool
+	clusterDomain     string
 
-	Spec *ControllerSpecs
+	Spec *GlusterControllerSpec
 
 	KubeClient clientset.Interface
 	KubeConfig *rest.Config
@@ -39,18 +36,20 @@ type GlusterFSController struct {
 }
 
 type IDSpecs struct {
-	Name string `json:"name"`
-	IP   string `json:"ip"`
+	Name     string `json:"name"`
+	IP       string `json:"ip"`
+	HostName string `json:"host_name"`
+	FQDN     string `json:"fqdn"`
 }
 
-type ControllerSpecs struct {
+type GlusterControllerSpec struct {
 	ReplicaCount   int       `json:"replicaCount"`
 	ControllerName string    `json:"controllerName"`
 	Election       string    `json:"election"`
 	Peer           []IDSpecs `json:"peer"`
 }
 
-func newGlusterFSControllerTask() *GlusterFSController {
+func NewGlusterFSController(clusterDomain string) *GlusterFSController {
 	conf, err := rest.InClusterConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -62,12 +61,13 @@ func newGlusterFSControllerTask() *GlusterFSController {
 	}
 
 	return &GlusterFSController{
-		GlusterFS:    os.Getenv(env.EnvVarGlusterFSCluster),
-		ElectionId:   os.Getenv(env.EnvVarElectionID),
-		PodName:      os.Getenv(env.EnvVarPodName),
-		PodNamespace: os.Getenv(env.EnvVarPodNamespace),
-		KubeClient:   c,
-		KubeConfig:   conf,
+		GlusterFS:     os.Getenv(env.EnvVarGlusterFSCluster),
+		ElectionId:    os.Getenv(env.EnvVarElectionID),
+		PodName:       os.Getenv(env.EnvVarPodName),
+		PodNamespace:  os.Getenv(env.EnvVarPodNamespace),
+		KubeClient:    c,
+		KubeConfig:    conf,
+		clusterDomain: clusterDomain,
 	}
 }
 

@@ -29,7 +29,7 @@ func (g *GlusterFSController) glusterPeerConnectCmd(pods []api.Pod) []string {
 		if pod.Name == g.PodName {
 			continue
 		}
-		cmds = append(cmds, "/usr/sbin/gluster peer probe "+pod.Status.PodIP)
+		cmds = append(cmds, "/usr/sbin/gluster peer probe "+g.podAddress(pod))
 	}
 	return cmds
 }
@@ -53,7 +53,7 @@ func (g *GlusterFSController) execVolumeCreateCmd(peers []api.Pod) {
 func (g *GlusterFSController) glusterVolumeCreateCmd(pods []api.Pod) []string {
 	bricks := ""
 	for _, p := range pods {
-		bricks = bricks + p.Status.PodIP + ":/storage/volumes/" + g.GlusterFS + " "
+		bricks = bricks + g.podAddress(p) + ":/storage/volumes/" + g.GlusterFS + " "
 	}
 
 	createCmd := ""
@@ -114,7 +114,7 @@ func (g *GlusterFSController) glusterBrickRemoveCmd(removed []api.Pod) []string 
 		cmds = append(cmds, fmt.Sprintf(`yes y | /usr/sbin/gluster volume remove-brick %s replica %v %s force`,
 			g.GlusterFS,
 			g.count,
-			removed[i].Status.PodIP+":/storage/volumes/"+g.GlusterFS,
+			g.podAddress(removed[i])+":/storage/volumes/"+g.GlusterFS,
 		))
 	}
 	return cmds
@@ -127,7 +127,7 @@ func (g *GlusterFSController) glusterBrickAddCmd(added []api.Pod) []string {
 		cmds = append(cmds, fmt.Sprintf(`/usr/sbin/gluster volume add-brick %s replica %v %s force`,
 			g.GlusterFS,
 			g.count,
-			added[i].Status.PodIP+":/storage/volumes/"+g.GlusterFS,
+			g.podAddress(added[i])+":/storage/volumes/"+g.GlusterFS,
 		))
 	}
 	return cmds
@@ -144,8 +144,15 @@ func (g *GlusterFSController) glusterPeerDetachCmd(removed []api.Pod) []string {
 	cmds := make([]string, 0)
 	for i := range removed {
 		cmds = append(cmds, fmt.Sprintf(`/usr/sbin/gluster peer detach %s`,
-			removed[i].Status.PodIP,
+			g.podAddress(removed[i]),
 		))
 	}
 	return cmds
+}
+
+func (g *GlusterFSController) podAddress(pod api.Pod) string {
+	if g.supportPTRRecords {
+		return g.podFQDN(pod)
+	}
+	return pod.Status.PodIP
 }
