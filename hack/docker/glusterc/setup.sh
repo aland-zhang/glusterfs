@@ -42,7 +42,7 @@ build_docker() {
 	chmod 755 glusterc
 
 	cat >Dockerfile <<EOL
-FROM appscode/base:8.6
+FROM appscode/base:8.7
 
 RUN set -x \
   && apt-get update \
