@@ -1,0 +1,9 @@
+#!/bin/bash
+exec 1> >(logger -s -p daemon.info -t ${PWD##*/})
+exec 2> >(logger -s -p daemon.error -t ${PWD##*/})
+source /etc/envvars
+
+# Reuired for NFV2 and NFSv3
+# ref: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Storage_Administration_Guide/s2-nfs-methodology-portmap.html
+
+exec rpcbind -f

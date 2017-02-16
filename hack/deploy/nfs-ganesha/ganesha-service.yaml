@@ -1,0 +1,9 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ganesha
+spec:
+  ports:
+    - port: 2049
+  selector:
+    app: ganesha

@@ -1,0 +1,15 @@
+#!/bin/bash
+exec 1> >(logger -s -p daemon.info -t ${PWD##*/})
+exec 2> >(logger -s -p daemon.error -t ${PWD##*/})
+source /etc/envvars
+
+# /usr/bin/ganesha.nfsd -h
+# LogFile    : SYSLOG
+# PidFile    : /var/run/ganesha.pid
+# DebugLevel : NIV_EVENT
+# ConfigFile : /etc/ganesha/ganesha.conf
+
+exec /usr/bin/ganesha.nfsd -F \
+  -f /etc/ganesha/ganesha.conf \
+  -N NIV_DEBUG \
+  -p /var/run/ganesha.pid

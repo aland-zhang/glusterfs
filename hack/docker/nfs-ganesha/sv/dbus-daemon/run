@@ -1,0 +1,8 @@
+#!/bin/bash
+exec 1> >(logger -s -p daemon.info -t ${PWD##*/})
+exec 2> >(logger -s -p daemon.error -t ${PWD##*/})
+source /etc/envvars
+
+# https://github.com/nfs-ganesha/nfs-ganesha/wiki/Dbusinterface#configuring-the-system-dbus-service
+# https://dbus.freedesktop.org/doc/dbus-daemon.1.html
+exec /usr/bin/dbus-daemon --system --nofork

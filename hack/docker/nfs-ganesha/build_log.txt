@@ -1,0 +1,332 @@
++ cmake -DUSE_FSAL_GLUSTER=ON -DUSE_FSAL_XFS=ON -DUSE_GUI_ADMIN_TOOLS=OFF -DUSE_DBUS=ON -DCMAKE_BUILD_TYPE=Maintainer ../src
+-- cmake version 3.0
+-- The C compiler identification is GNU 4.9.2
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- override default CMAKE_INSTALL_PREFIX = /usr
+-- Detected a non Red hat based
+-- toolchain options processed
+-- Found PkgConfig: /usr/bin/pkg-config (found version "0.28")
+-- Compilation from within a git repository. Using git rev-parse HEAD
+-- Looking for include file stdbool.h
+-- Looking for include file stdbool.h - found
+-- Looking for include file strings.h
+-- Looking for include file strings.h - found
+-- Looking for include file string.h
+-- Looking for include file string.h - found
+-- Check if the system is big endian
+-- Searching 16 bit integer
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of unsigned short
+-- Check size of unsigned short - done
+-- Using unsigned short
+-- Check if the system is big endian - little endian
+-- Looking for include file pthread.h
+-- Looking for include file pthread.h - found
+-- Looking for pthread_create
+-- Looking for pthread_create - not found
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Found Threads: TRUE
+-- found krb5-config here /usr/bin/krb5-config
+-- Found kerberos 5 headers: /include
+-- Found kerberos 5 libs:    /usr/lib/x86_64-linux-gnu/mit-krb5/libkrb5.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libk5crypto.so;/usr/lib/x86_64-linux-gnu/libcom_err.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libgssapi_krb5.so
+-- Looking for include file gssapi.h
+-- Looking for include file gssapi.h - found
+-- checking for module 'glusterfs-api>=7.3.7'
+--   found glusterfs-api, version 7.3.7.8
+-- GFAPI_INCLUDE_DIRS=/usr/include/glusterfs;/usr/include/uuid
+-- GFAPI_LIBRARY_DIRS=
+-- Looking for include files unistd.h, attr/xattr.h
+-- Looking for include files unistd.h, attr/xattr.h - found
+-- Looking for include file acl/libacl.h
+-- Looking for include file acl/libacl.h - found
+-- checking for module 'glusterfs-api>=7.3.7.4'
+--   found glusterfs-api, version 7.3.7.8
+-- Looking for include files unistd.h, lustre/lustre_user.h
+-- Looking for include files unistd.h, lustre/lustre_user.h - not found
+CMake Warning at CMakeLists.txt:603 (message):
+  Cannot find LUSTRE runtime.  Disabling LUSTRE fsal build
+
+
+-- Looking for include file lustre/lustreapi.h
+-- Looking for include file lustre/lustreapi.h - not found
+-- Looking for include file lustre/liblustreapi.h
+-- Looking for include file lustre/liblustreapi.h - not found
+ERRORCannot find lustre header files, aborting
+-- Looking for open_by_handle in handle
+-- Looking for open_by_handle in handle - found
+-- Looking for include file xfs/xfs.h
+-- Looking for include file xfs/xfs.h - found
+-- Looking for libzfswrap_init in zfswrap
+-- Looking for libzfswrap_init in zfswrap - not found
+-- Looking for include files unistd.h, libzfswrap.h
+-- Looking for include files unistd.h, libzfswrap.h - not found
+CMake Warning at CMakeLists.txt:692 (message):
+  Cannot find ZFS runtime.  Disabling ZFS build
+
+
+-- Found JeMalloc: /usr/lib/x86_64-linux-gnu/libjemalloc.so
+-- checking for module 'dbus-1'
+--   found dbus-1, version 1.8.20
+-- Found nfs idmap library: /usr/lib/x86_64-linux-gnu/libnfsidmap.so
+-- Looking for wbcLookupSids in wbclient
+-- Looking for wbcLookupSids in wbclient - found
+-- Looking for 3 include files stdint.h, ..., wbclient.h
+-- Looking for 3 include files stdint.h, ..., wbclient.h - found
+-- Performing Test WBCLIENT4_H
+-- Performing Test WBCLIENT4_H - Success
+-- Found Winbind4 client:
+-- Looking for cap_set_proc in cap
+-- Looking for cap_set_proc in cap - found
+-- Looking for include file blkid/blkid.h
+-- Looking for include file blkid/blkid.h - not found
+-- Looking for blkid_devno_to_devname in blkid
+-- Looking for blkid_devno_to_devname in blkid - not found
+-- Looking for include file uuid/uuid.h
+-- Looking for include file uuid/uuid.h - found
+-- Looking for uuid_parse in uuid
+-- Looking for uuid_parse in uuid - found
+-- Could not find blkid library, disabling USE_BLKID
+-- Looking for daemon in c
+-- Looking for daemon in c - found
+CMake Warning (dev) at libntirpc/CMakeLists.txt:13 (project):
+  Policy CMP0048 is not set: project() command manages VERSION variables.
+  Run "cmake --help-policy CMP0048" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  The following variable(s) would be set to empty:
+
+    NTIRPC_VERSION
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- OVERRIDE_INSTALL_PREFIX =
+-- found krb5-config here /usr/bin/krb5-config
+-- Found kerberos 5 headers: /include
+-- Found kerberos 5 libs:    /usr/lib/x86_64-linux-gnu/mit-krb5/libkrb5.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libk5crypto.so;/usr/lib/x86_64-linux-gnu/libcom_err.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libgssapi_krb5.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libkrb5.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libk5crypto.so;/usr/lib/x86_64-linux-gnu/libcom_err.so;/usr/lib/x86_64-linux-gnu/mit-krb5/libgssapi_krb5.so
+-- Found Winbind4 client:
+--
+-- -------------------------------------------------------
+-- TIRPC_EPOLL = ON
+-- USE_RPC_RDMA = OFF
+-- Using ntirpc submodule
+/root/dockerfiles/glusterfs/nfs-ganesha/nfs-ganesha/src/libntirpc/ntirpc/
+-- Found BISON: /usr/bin/bison (found version "3.0.2")
+-- Found FLEX: /usr/bin/flex (found version "2.5.39")
+--
+-- -------------------------------------------------------
+-- PLATFORM = LINUX
+-- VERSION = 2.3.1
+-- BUILD HOST = ops-buildbox2
+-- -------------------------------------------------------
+-- USE_FSAL_PROXY = ON
+-- USE_FSAL_VFS = ON
+-- USE_FSAL_CEPH = ON
+-- USE_FSAL_HPSS = OFF
+-- USE_FSAL_XFS = ON
+-- USE_FSAL_PANFS = ON
+-- USE_FSAL_GPFS = ON
+-- USE_FSAL_PT = OFF
+-- USE_FSAL_ZFS = OFF
+-- USE_FSAL_LUSTRE = OFF
+-- USE_FSAL_SHOOK = OFF
+-- USE_FSAL_LUSTRE_UP = OFF
+-- USE_FSAL_GLUSTER = ON
+-- USE_FSAL_NULL = ON
+-- USE_SYSTEM_NTIRPC = OFF
+-- USE_DBUS = ON
+-- USE_CB_SIMULATOR = OFF
+-- USE_NFSIDMAP = ON
+-- ENABLE_ERROR_INJECTION = OFF
+-- ENABLE_VFS_DEBUG_ACL = OFF
+-- ENABLE_RFC_ACL = OFF
+-- USE_CAPS = ON
+-- USE_BLKID = OFF
+-- STRICT_PACKAGE = OFF
+-- DISTNAME_HAS_GIT_DATA = OFF
+-- _MSPAC_SUPPORT = ON
+-- USE_EFENCE = OFF
+-- _NO_TCP_REGISTER = ON
+-- _NO_PORTMAPPER = ON
+-- _NO_XATTRD = ON
+-- DEBUG_SAL = OFF
+-- _VALGRIND_MEMCHECK = OFF
+-- PROXY_HANDLE_MAPPING = OFF
+-- DEBUG_SYMS = OFF
+-- COVERAGE = OFF
+-- ENFORCE_GCC = OFF
+-- PROFILING = OFF
+-- USE_GSS = ON
+-- TIRPC_EPOLL = ON
+-- USE_9P = ON
+-- _USE_9P = ON
+-- _USE_9P_RDMA = OFF
+-- USE_NFS_RDMA = OFF
+-- KRB5_PREFIX =
+-- CEPH_PREFIX = /usr
+-- HPSS_PREFIX =
+-- GLUSTER_PREFIX = /usr
+-- ZFS_PREFIX = /usr
+-- LUSTRE_PREFIX = /usr
+-- CMAKE_PREFIX_PATH =
+-- _GIT_HEAD_COMMIT = ea0474d4b594f2a1dd0146f778bf292c756e2377
+-- _GIT_HEAD_COMMIT_ABBREV = ea0474d
+-- _GIT_DESCRIBE = V2.3.1-0-gea0474d
+-- ALLOCATOR = jemalloc
+-- GOLD_LINKER =
+-- CMAKE_INSTALL_PREFIX = /usr
+-- FSAL_DESTINATION = /usr/lib/ganesha
+-- USE_ADMIN_TOOLS = OFF
+-- USE_GUI_ADMIN_TOOLS = OFF
+-- MODULES_PATH =
+-- USE_TSAN = OFF
+-- USE_LTTNG = OFF
+-- USE_BLKIN = OFF
+-- Could NOT find Doxygen (missing:  DOXYGEN_EXECUTABLE)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /root/dockerfiles/glusterfs/nfs-ganesha/nfs-ganesha/build
+
+Install the project...
+-- Install configuration: "Maintainer"
+-- Installing: /etc/ganesha/ganesha.conf
+-- Installing: /usr/share/doc/ganesha/config_samples
+-- Installing: /usr/share/doc/ganesha/config_samples/ceph.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/gpfs.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/config.txt
+-- Installing: /usr/share/doc/ganesha/config_samples/lustre.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/hpss.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/gluster.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/ds.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/gpfs.ganesha.exports.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/gpfs.ganesha.main.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/xfs.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/gpfs.ganesha.nfsd.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/vfs.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/logrotate_ganesha
+-- Installing: /usr/share/doc/ganesha/config_samples/logging..txt
+-- Installing: /usr/share/doc/ganesha/config_samples/zfs.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/README
+-- Installing: /usr/share/doc/ganesha/config_samples/gpfs.ganesha.log.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/pt.conf
+-- Installing: /usr/share/doc/ganesha/config_samples/export.txt
+-- Installing: /var/run/ganesha
+-- Installing: /usr/lib/pkgconfig/libntirpc.pc
+-- Installing: /usr/include/ntirpc
+-- Installing: /usr/include/ntirpc/rpc
+-- Installing: /usr/include/ntirpc/rpc/xdr_inline.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_cksum.h
+-- Installing: /usr/include/ntirpc/rpc/rpcent.h
+-- Installing: /usr/include/ntirpc/rpc/rpc.h
+-- Installing: /usr/include/ntirpc/rpc/svc_rqst.h
+-- Installing: /usr/include/ntirpc/rpc/xdr_ioq.h
+-- Installing: /usr/include/ntirpc/rpc/raw.h
+-- Installing: /usr/include/ntirpc/rpc/nettype.h
+-- Installing: /usr/include/ntirpc/rpc/clnt_soc.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_prot.x
+-- Installing: /usr/include/ntirpc/rpc/pmap_clnt.h
+-- Installing: /usr/include/ntirpc/rpc/xdr.h
+-- Installing: /usr/include/ntirpc/rpc/pmap_prot.h
+-- Installing: /usr/include/ntirpc/rpc/pool_queue.h
+-- Installing: /usr/include/ntirpc/rpc/auth_gss.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_dplx.h
+-- Installing: /usr/include/ntirpc/rpc/auth_inline.h
+-- Installing: /usr/include/ntirpc/rpc/des.h
+-- Installing: /usr/include/ntirpc/rpc/xdr_inrec.h
+-- Installing: /usr/include/ntirpc/rpc/auth_kerb.h
+-- Installing: /usr/include/ntirpc/rpc/svc_dg.h
+-- Installing: /usr/include/ntirpc/rpc/des_crypt.h
+-- Installing: /usr/include/ntirpc/rpc/types.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_msg.h
+-- Installing: /usr/include/ntirpc/rpc/auth_unix.h
+-- Installing: /usr/include/ntirpc/rpc/tirpc_compat.h
+-- Installing: /usr/include/ntirpc/rpc/clnt.h
+-- Installing: /usr/include/ntirpc/rpc/auth_des.h
+-- Installing: /usr/include/ntirpc/rpc/clnt_stat.h
+-- Installing: /usr/include/ntirpc/rpc/svc.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_clnt.h
+-- Installing: /usr/include/ntirpc/rpc/pmap_rmt.h
+-- Installing: /usr/include/ntirpc/rpc/svc_soc.h
+-- Installing: /usr/include/ntirpc/rpc/svc_auth.h
+-- Installing: /usr/include/ntirpc/rpc/rpcb_prot.h
+-- Installing: /usr/include/ntirpc/rpc/auth.h
+-- Installing: /usr/include/ntirpc/rpc/rpc_com.h
+-- Installing: /usr/include/ntirpc/rpc/gss_internal.h
+-- Installing: /usr/include/ntirpc/rpc/work_pool.h
+-- Installing: /usr/include/ntirpc/un-namespace.h
+-- Installing: /usr/include/ntirpc/rpcsvc
+-- Installing: /usr/include/ntirpc/rpcsvc/crypt.h
+-- Installing: /usr/include/ntirpc/fpmath.h
+-- Installing: /usr/include/ntirpc/netconfig.h
+-- Installing: /usr/include/ntirpc/reentrant.h
+-- Installing: /usr/include/ntirpc/getpeereid.h
+-- Installing: /usr/include/ntirpc/misc
+-- Installing: /usr/include/ntirpc/misc/socket.h
+-- Installing: /usr/include/ntirpc/misc/rbtree_x.h
+-- Installing: /usr/include/ntirpc/misc/portable.h
+-- Installing: /usr/include/ntirpc/misc/city.h
+-- Installing: /usr/include/ntirpc/misc/event.h
+-- Installing: /usr/include/ntirpc/misc/winpthreads.h
+-- Installing: /usr/include/ntirpc/misc/abstract_atomic.h
+-- Installing: /usr/include/ntirpc/misc/timespec.h
+-- Installing: /usr/include/ntirpc/misc/thrdpool.h
+-- Installing: /usr/include/ntirpc/misc/citycrc.h
+-- Installing: /usr/include/ntirpc/misc/opr.h
+-- Installing: /usr/include/ntirpc/misc/stdio.h
+-- Installing: /usr/include/ntirpc/misc/rbtree.h
+-- Installing: /usr/include/ntirpc/misc/os_epoll.h
+-- Installing: /usr/include/ntirpc/misc/bsd_epoll.h
+-- Installing: /usr/include/ntirpc/misc/stdint.h
+-- Installing: /usr/include/ntirpc/misc/wait_queue.h
+-- Installing: /usr/include/ntirpc/misc/opr_queue.h
+-- Installing: /usr/include/ntirpc/misc/queue.h
+-- Installing: /usr/include/ntirpc/libc_private.h
+-- Installing: /usr/include/ntirpc/namespace.h
+-- Installing: /usr/include/ntirpc/intrinsic.h
+-- Installing: /usr/include/ntirpc/version.h
+-- Installing: /usr/lib/libntirpc.so.1.3.1
+-- Installing: /usr/lib/libntirpc.so.1.3
+-- Installing: /usr/lib/libntirpc.so
+-- Removed runtime path from "/usr/lib/libntirpc.so.1.3.1"
+-- Installing: /usr/lib/ganesha/libfsalnull.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalnull.so.4
+-- Installing: /usr/lib/ganesha/libfsalnull.so
+-- Installing: /usr/lib/ganesha/libfsalproxy.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalproxy.so.4
+-- Installing: /usr/lib/ganesha/libfsalproxy.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalproxy.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalceph.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalceph.so.4
+-- Installing: /usr/lib/ganesha/libfsalceph.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalceph.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalgpfs.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalgpfs.so.4
+-- Installing: /usr/lib/ganesha/libfsalgpfs.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalgpfs.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalvfs.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalvfs.so.4
+-- Installing: /usr/lib/ganesha/libfsalvfs.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalvfs.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalxfs.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalxfs.so.4
+-- Installing: /usr/lib/ganesha/libfsalxfs.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalxfs.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalpanfs.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalpanfs.so.4
+-- Installing: /usr/lib/ganesha/libfsalpanfs.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalpanfs.so.4.2.0"
+-- Installing: /usr/lib/ganesha/libfsalgluster.so.4.2.0
+-- Installing: /usr/lib/ganesha/libfsalgluster.so.4
+-- Installing: /usr/lib/ganesha/libfsalgluster.so
+-- Removed runtime path from "/usr/lib/ganesha/libfsalgluster.so.4.2.0"
+-- Installing: /usr/bin/ganesha.nfsd
+-- Removed runtime path from "/usr/bin/ganesha.nfsd"

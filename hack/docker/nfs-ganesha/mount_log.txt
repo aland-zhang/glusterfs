@@ -1,0 +1,115 @@
+# mount 159.203.174.57:/newvolume /mnt/nfs/home -v
+
+
+mount.nfs: timeout set for Wed Mar 30 11:03:00 2016
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+mount.nfs: trying text-based options 'vers=4,addr=159.203.174.57,clientaddr=104.236.219.169'
+mount.nfs: mount(2): No such file or directory
+mount.nfs: trying text-based options 'addr=159.203.174.57'
+mount.nfs: prog 100003, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100003 vers 3 prot TCP port 2049
+mount.nfs: prog 100005, trying vers=3, prot=17
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot UDP port 44229
+mount.nfs: portmap query retrying: RPC: Unable to receive - Connection refused
+mount.nfs: prog 100005, trying vers=3, prot=6
+mount.nfs: trying 159.203.174.57 prog 100005 vers 3 prot TCP port 46815
+mount.nfs: portmap query failed: RPC: Remote system error - Connection refused
+
