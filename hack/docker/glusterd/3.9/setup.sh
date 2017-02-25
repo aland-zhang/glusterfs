@@ -9,7 +9,7 @@ source "$REPO_ROOT/hack/libbuild/common/lib.sh"
 source "$REPO_ROOT/hack/libbuild/common/public_image.sh"
 
 IMG=glusterd
-TAG=3.7
+TAG=3.9
 PRIVILEGED_CONTAINER='--privileged=true'
 
 binary_repo $@

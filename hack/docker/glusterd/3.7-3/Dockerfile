@@ -9,7 +9,7 @@ RUN set -x \
   && echo deb http://download.gluster.org/pub/gluster/glusterfs/3.7/3.7.8/Debian/jessie/apt jessie main > /etc/apt/sources.list.d/gluster.list \
   && apt-get update \
   && apt-get install -y --no-install-recommends glusterfs-server attr \
-  && apt-get purge -y --auto-remove ca-certificates wget \
+  && apt-get purge -y --auto-remove wget \
   && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man /tmp/* \
   && mkdir -p /var/run
 

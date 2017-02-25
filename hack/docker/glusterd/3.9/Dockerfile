@@ -5,8 +5,8 @@ ENV PVROOT /storage
 RUN set -x \
   && apt-get update \
   && apt-get install -y --no-install-recommends apt-transport-https ca-certificates wget \
-  && wget -O - http://download.gluster.org/pub/gluster/glusterfs/3.7/LATEST/rsa.pub | apt-key add - \
-  && echo deb http://download.gluster.org/pub/gluster/glusterfs/3.7/LATEST/Debian/jessie/apt jessie main > /etc/apt/sources.list.d/gluster.list \
+  && wget -O - http://download.gluster.org/pub/gluster/glusterfs/3.9/LATEST/rsa.pub | apt-key add - \
+  && echo deb http://download.gluster.org/pub/gluster/glusterfs/3.9/LATEST/Debian/jessie/apt jessie main > /etc/apt/sources.list.d/gluster.list \
   && apt-get update \
   && apt-get install -y --no-install-recommends glusterfs-server attr \
   && apt-get purge -y --auto-remove wget \
