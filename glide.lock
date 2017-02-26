@@ -1,5 +1,5 @@
 hash: f72d30de1cd9dd0d1d2d5baebce5feabb10e96e074d0f51d611f4767dbae8b73
-updated: 2017-01-04T05:38:07.902634993-08:00
+updated: 2017-02-26T12:15:44.461674869-08:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -9,13 +9,13 @@ imports:
 - name: github.com/appscode/errors
   version: 6a668ba07d02064c06707b7d8b0f5239db707045
 - name: github.com/appscode/go
-  version: a7f716de7a1373d1e8a5b31728166ada8e7595c6
+  version: 7ba1c0a441c6c319a501e54db6e93deaff5fe0dd
   subpackages:
   - crypto/rand
   - hold
   - version
 - name: github.com/appscode/k8s-addons
-  version: 33355decdcfd7223715907341bac88c2106834a9
+  version: 6c456dc8cb1c02a834c55d910330176569bfb62a
   subpackages:
   - pkg/election
   - pkg/stash
@@ -242,7 +242,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
 - name: k8s.io/kubernetes
-  version: 5f332aab13e58173f85fd204a2c77731f7a2573f
+  version: 029c3a408176b55c30846f0faedf56aae5992e9b
   subpackages:
   - pkg/api
   - pkg/api/errors
