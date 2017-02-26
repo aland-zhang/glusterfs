@@ -38,6 +38,14 @@ from os.path import expandvars
 libbuild.REPO_ROOT = expandvars('$GOPATH') + '/src/github.com/appscode/glusterfs'
 BUILD_METADATA = libbuild.metadata(libbuild.REPO_ROOT)
 libbuild.BIN_MATRIX = {
+    'gfider': {
+        'type': 'go',
+        'go_version': True,
+        'use_cgo': False,
+        'distro': {
+            'linux': ['amd64']
+        }
+    },
     'glusterc': {
         'type': 'go',
         'go_version': True,
