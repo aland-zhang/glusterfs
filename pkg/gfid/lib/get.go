@@ -15,7 +15,6 @@ func Get(storageDir string, gfids []string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"GFID", "SIZE", "MODE", "MTIME", "PATH"})
@@ -42,5 +41,5 @@ func Get(storageDir string, gfids []string) error {
 		})
 	}
 	table.Render()
-	return nil
+	return db.Close()
 }

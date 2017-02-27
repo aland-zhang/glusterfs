@@ -11,6 +11,7 @@ import (
 
 	"github.com/appscode/log"
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/opt"
 	"golang.org/x/sys/unix"
 	"k8s.io/kubernetes/pkg/util/json"
 )
@@ -20,9 +21,8 @@ func Extract(dataDir, storageDir string, computeChecksum bool) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
-	return filepath.Walk(dataDir, func(path string, fi os.FileInfo, err error) error {
+	filepath.Walk(dataDir, func(path string, fi os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -69,6 +69,8 @@ func Extract(dataDir, storageDir string, computeChecksum bool) error {
 		if err != nil {
 			return err
 		}
-		return db.Put(gfid, bytes, nil)
+		return db.Put(gfid, bytes, &opt.WriteOptions{Sync: true})
 	})
+
+	return db.Close()
 }
