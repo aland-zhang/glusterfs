@@ -30,6 +30,7 @@ func main() {
 	rootCmd.AddCommand(version.NewCmdVersion())
 	rootCmd.AddCommand(gfidCmd.NewCmdExtract())
 	rootCmd.AddCommand(gfidCmd.NewCmdGet())
+	rootCmd.AddCommand(gfidCmd.NewCmdDescribe())
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)

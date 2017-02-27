@@ -8,7 +8,7 @@ import (
 )
 
 func NewCmdExtract() *cobra.Command {
-	storageDir, err := GetStorageDir()
+	gfidDir, err := GetGFIDDir()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -19,14 +19,14 @@ func NewCmdExtract() *cobra.Command {
 		Use: "extract",
 		Run: func(cmd *cobra.Command, args []string) {
 			flags.EnsureRequiredFlags(cmd, "data-dir")
-			err := lib.Extract(dataDir, storageDir, computeChecksum)
+			err := lib.Extract(dataDir, gfidDir, computeChecksum)
 			if err != nil {
 				log.Fatalln(err)
 			}
 		},
 	}
 	cmd.Flags().StringVar(&dataDir, "data-dir", "", "Data to encrypt")
-	cmd.Flags().StringVar(&storageDir, "storage-dir", storageDir, "Directory where LevelDB file is stored.")
+	cmd.Flags().StringVar(&gfidDir, "gfid-dir", gfidDir, "Directory where LevelDB file is stored.")
 	cmd.Flags().BoolVar(&computeChecksum, "compute-checksum", false, "Compute md5 checksum for files.")
 	return cmd
 }

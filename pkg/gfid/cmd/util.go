@@ -2,7 +2,7 @@ package cmd
 
 import "os"
 
-func GetStorageDir() (string, error) {
+func GetGFIDDir() (string, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return "", err

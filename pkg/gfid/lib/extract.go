@@ -15,8 +15,8 @@ import (
 	"k8s.io/kubernetes/pkg/util/json"
 )
 
-func Extract(dataDir, storageDir string, computeChecksum bool) error {
-	db, err := leveldb.OpenFile(storageDir, nil)
+func Extract(dataDir, gfidDir string, computeChecksum bool) error {
+	db, err := leveldb.OpenFile(gfidDir, nil)
 	if err != nil {
 		return err
 	}

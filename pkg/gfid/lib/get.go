@@ -6,24 +6,13 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/appscode/go/net"
 	"github.com/dustin/go-humanize"
 	"github.com/olekukonko/tablewriter"
 	"github.com/syndtr/goleveldb/leveldb"
 	"k8s.io/kubernetes/pkg/util/json"
 )
 
-func GetGFIDs(vol string) ([]string, error) {
-	_, ip, err := net.NodeIP()
-	if err != nil {
-		return nil, err
-	}
-
-	hostname, err := os.Hostname()
-	if err != nil {
-		return nil, err
-	}
-
+func GetGFIDs(vol, brick string) ([]string, error) {
 	cmdOut, err := exec.Command("gluster", "volume", "heal", vol, "info").Output() // , "split-brain"
 	if err != nil {
 		return nil, err
@@ -34,11 +23,9 @@ func GetGFIDs(vol string) ([]string, error) {
 
 	lines := strings.Split(string(cmdOut), "\n")
 	for _, line := range lines {
-		// fmt.Println(line)
 		if strings.HasPrefix(line, "Brick ") {
 			l := line[len("Brick "):]
-			d := strings.Split(l, ":")
-			found = (d[0] == ip.String() || d[0] == hostname)
+			found = (l == brick)
 			continue
 		} else if found && strings.HasPrefix(line, "<gfid:") {
 			l := line[len("<gfid:"):strings.Index(line, ">")]
@@ -48,8 +35,8 @@ func GetGFIDs(vol string) ([]string, error) {
 	return gfids, nil
 }
 
-func Get(storageDir string, gfids []string) error {
-	db, err := leveldb.OpenFile(storageDir, nil)
+func Get(gfidDir string, gfids []string) error {
+	db, err := leveldb.OpenFile(gfidDir, nil)
 	if err != nil {
 		return err
 	}
