@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/hex"
 	"os"
 	"strings"
 
@@ -22,24 +23,35 @@ func Get(storageDir string, gfids []string) error {
 	for _, gfid := range gfids {
 		gfid = strings.Replace(gfid, "-", "", -1)
 
-		bytes, err := db.Get([]byte(gfid), nil)
+		key, err := hex.DecodeString(gfid)
 		if err != nil {
 			return err
 		}
 
-		var ii InodeInfo
-		err = json.Unmarshal(bytes, &ii)
+		bytes, err := db.Get(key, nil)
 		if err != nil {
-			return err
-		}
+			table.Append([]string{
+				gfid,
+				"",
+				"",
+				"",
+				"<NOT FOUND>",
+			})
+		} else {
+			var ii InodeInfo
+			err = json.Unmarshal(bytes, &ii)
+			if err != nil {
+				return err
+			}
 
-		table.Append([]string{
-			ii.GFID,
-			humanize.Bytes(uint64(ii.Size)),
-			ii.Mode.String(),
-			ii.Mtime.String(),
-			ii.Path,
-		})
+			table.Append([]string{
+				ii.GFID,
+				humanize.Bytes(uint64(ii.Size)),
+				ii.Mode.String(),
+				ii.Mtime.String(),
+				ii.Path,
+			})
+		}
 	}
 	table.Render()
 	return nil
