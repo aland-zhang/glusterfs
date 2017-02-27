@@ -24,7 +24,7 @@ func GetGFIDs(vol string) ([]string, error) {
 		return nil, err
 	}
 
-	cmdOut, err := exec.Command("gluster", "volume", "heal", vol, "info", "split-brain").Output()
+	cmdOut, err := exec.Command("gluster", "volume", "heal", vol, "info").Output() // , "split-brain"
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func GetGFIDs(vol string) ([]string, error) {
 			found = (d[0] == ip.String() || d[0] == hostname)
 			continue
 		} else if found && strings.HasPrefix(line, "<gfid:") {
-			l := line[len("<gfid:") : len(line)-1]
+			l := line[len("<gfid:"):strings.Index(line, ">")]
 			gfids = append(gfids, l)
 		}
 	}
@@ -56,7 +56,7 @@ func Get(storageDir string, gfids []string) error {
 	defer db.Close()
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"GFID", "SIZE", "MTIME", "PATH"})
+	table.SetHeader([]string{"GFID", "MODE", "SIZE", "MTIME", "PATH"})
 	for _, gfid := range gfids {
 		gfid = strings.Replace(gfid, "-", "", -1)
 
@@ -71,6 +71,7 @@ func Get(storageDir string, gfids []string) error {
 				gfid,
 				"",
 				"",
+				"",
 				"<NOT FOUND>",
 			})
 		} else {
@@ -82,6 +83,7 @@ func Get(storageDir string, gfids []string) error {
 
 			table.Append([]string{
 				ii.GFID,
+				ii.Mode.String(),
 				humanize.Bytes(uint64(ii.Size)),
 				ii.Mtime.String(),
 				ii.Path,
