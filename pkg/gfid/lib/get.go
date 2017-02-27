@@ -19,7 +19,7 @@ func Get(storageDir string, gfids []string) error {
 	defer db.Close()
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"GFID", "SIZE", "MODE", "MTIME", "PATH"})
+	table.SetHeader([]string{"GFID", "SIZE", "MTIME", "PATH"})
 	for _, gfid := range gfids {
 		gfid = strings.Replace(gfid, "-", "", -1)
 
@@ -34,7 +34,6 @@ func Get(storageDir string, gfids []string) error {
 				gfid,
 				"",
 				"",
-				"",
 				"<NOT FOUND>",
 			})
 		} else {
@@ -47,7 +46,6 @@ func Get(storageDir string, gfids []string) error {
 			table.Append([]string{
 				ii.GFID,
 				humanize.Bytes(uint64(ii.Size)),
-				ii.Mode.String(),
 				ii.Mtime.String(),
 				ii.Path,
 			})
