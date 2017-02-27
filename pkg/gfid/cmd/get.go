@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/appscode/glusterfs/pkg/gfid/lib"
-	"github.com/appscode/go/flags"
 	"github.com/appscode/log"
 	"github.com/spf13/cobra"
 )
@@ -13,12 +12,19 @@ func NewCmdGet() *cobra.Command {
 		log.Fatalln(err)
 	}
 
+	var vol string
 	var gfids []string
 	cmd := &cobra.Command{
 		Use: "get",
 		Run: func(cmd *cobra.Command, args []string) {
-			flags.EnsureRequiredFlags(cmd, "gfids")
-			err := lib.Get(storageDir, gfids)
+			var err error
+			if vol != "" {
+				gfids, err = lib.GetGFIDs(vol)
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+			err = lib.Get(storageDir, gfids)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -26,5 +32,6 @@ func NewCmdGet() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&storageDir, "storage-dir", storageDir, "Directory where LevelDB file is stored.")
 	cmd.Flags().StringSliceVar(&gfids, "gfids", []string{}, "Comma separated list of GFIDs.")
+	cmd.Flags().StringVarP(&vol, "volume", "v", "", "Volume name used to detect split-brain gfids")
 	return cmd
 }
