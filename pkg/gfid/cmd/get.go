@@ -32,6 +32,6 @@ func NewCmdGet() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&storageDir, "storage-dir", storageDir, "Directory where LevelDB file is stored.")
 	cmd.Flags().StringSliceVar(&gfids, "gfids", []string{}, "Comma separated list of GFIDs.")
-	cmd.Flags().StringVarP(&vol, "volume", "v", "", "Volume name used to detect split-brain gfids")
+	cmd.Flags().StringVar(&vol, "volume", "", "Volume name used to detect split-brain gfids")
 	return cmd
 }
