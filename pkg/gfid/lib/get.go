@@ -10,8 +10,8 @@ import (
 	"k8s.io/kubernetes/pkg/util/json"
 )
 
-func Get(gfidFile string, gfids []string) error {
-	db, err := leveldb.OpenFile(gfidFile, nil)
+func Get(storageDir string, gfids []string) error {
+	db, err := leveldb.OpenFile(storageDir, nil)
 	if err != nil {
 		return err
 	}

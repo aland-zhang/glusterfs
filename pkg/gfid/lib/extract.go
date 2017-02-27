@@ -16,12 +16,7 @@ import (
 )
 
 func Extract(dataDir, storageDir string, computeChecksum bool) error {
-	hostname, err := os.Hostname()
-	if err != nil {
-		return err
-	}
-
-	db, err := leveldb.OpenFile(storageDir+"/"+hostname+".gfid", nil)
+	db, err := leveldb.OpenFile(storageDir, nil)
 	if err != nil {
 		return err
 	}
