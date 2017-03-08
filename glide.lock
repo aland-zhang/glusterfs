@@ -1,5 +1,5 @@
 hash: 7625d902ef4e0864fd7271c2f91368cbbe32a192e3decb9ab1bc4d078f0a940b
-updated: 2017-03-08T13:42:40.986967005+06:00
+updated: 2017-03-08T14:39:23.17034858+06:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -11,23 +11,14 @@ imports:
 - name: github.com/appscode/go
   version: 7ba1c0a441c6c319a501e54db6e93deaff5fe0dd
   subpackages:
-  - crypto/rand
   - flags
-  - hold
   - version
 - name: github.com/appscode/k8s-addons
   version: 2feea95b0d62ad215bef8d0789978be7c9d58d06
-  subpackages:
-  - pkg/election
-  - pkg/stash
 - name: github.com/appscode/log
   version: 68e0e42e42c01371f3950571fc87c2298a51dd8f
   subpackages:
   - golog
-- name: github.com/Azure/go-ansiterm
-  version: 70b2c90b260171e829f1ebd7c17f600c11858dbe
-  subpackages:
-  - winterm
 - name: github.com/blang/semver
   version: 31b736133b98f26d5e078ec9eb591666edfd091f
 - name: github.com/coreos/go-oidc
@@ -55,24 +46,6 @@ imports:
   subpackages:
   - digest
   - reference
-- name: github.com/docker/docker
-  version: b9f10c951893f9a00865890a5232e85d770c1087
-  subpackages:
-  - pkg/jsonlog
-  - pkg/jsonmessage
-  - pkg/longpath
-  - pkg/mount
-  - pkg/stdcopy
-  - pkg/symlink
-  - pkg/system
-  - pkg/term
-  - pkg/term/windows
-- name: github.com/docker/go-units
-  version: 0bbddae09c5a5419a8c6dcdd7ff90da3d450393b
-- name: github.com/docker/spdystream
-  version: 449fdfce4d962303d702fec724ef0ad181c92528
-  subpackages:
-  - spdy
 - name: github.com/dustin/go-humanize
   version: 259d2a102b871d17f30e3cd9881a642961a1e486
 - name: github.com/emicklei/go-restful
@@ -80,8 +53,6 @@ imports:
   subpackages:
   - log
   - swagger
-- name: github.com/facebookgo/stack
-  version: d9d227395bc3d7a635388c75b2e3b3a750e11888
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-openapi/jsonpointer
@@ -122,10 +93,6 @@ imports:
   - vanity/command
 - name: github.com/golang/glog
   version: 44145f04b68cf362d9c4df2182967c2275eaefed
-- name: github.com/golang/groupcache
-  version: 02826c3e79038b59d737d3b1c0a1d937f71a4433
-  subpackages:
-  - lru
 - name: github.com/golang/protobuf
   version: 8616e8ee5e20a1704615e6c8d7afcdac06087a67
   subpackages:
@@ -153,14 +120,6 @@ imports:
   - jwriter
 - name: github.com/mattn/go-runewidth
   version: d6bea18f789704b5f83375793155289da36a3c7f
-- name: github.com/mikespook/golib
-  version: 38fe6917d34b267a79c3432369e7dcc379e2d5b3
-  subpackages:
-  - autoinc
-  - idgen
-  - signal
-- name: github.com/mitchellh/go-wordwrap
-  version: ad45545899c7b13c020ea92b2072220eefad42b8
 - name: github.com/olekukonko/tablewriter
   version: febf2d34b54a69ce7530036c7503b1c9fbfdf0bb
 - name: github.com/pborman/uuid
@@ -169,8 +128,6 @@ imports:
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
-- name: github.com/Sirupsen/logrus
-  version: 51fe59aca108dc5680109e7b2051cbdcfa5a253c
 - name: github.com/spf13/cobra
   version: f62e98d28ab7ad31d707ba837a966378465c7b57
   subpackages:
@@ -260,11 +217,6 @@ imports:
   - urlfetch
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
-- name: gopkg.in/mgo.v2
-  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
-  subpackages:
-  - bson
-  - internal/json
 - name: gopkg.in/yaml.v2
   version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
 - name: k8s.io/kubernetes
@@ -330,10 +282,7 @@ imports:
   - pkg/client/clientset_generated/internalclientset/typed/policy/internalversion
   - pkg/client/clientset_generated/internalclientset/typed/rbac/internalversion
   - pkg/client/clientset_generated/internalclientset/typed/storage/internalversion
-  - pkg/client/leaderelection
-  - pkg/client/leaderelection/resourcelock
   - pkg/client/metrics
-  - pkg/client/record
   - pkg/client/restclient
   - pkg/client/testing/core
   - pkg/client/transport
@@ -343,14 +292,11 @@ imports:
   - pkg/client/unversioned/clientcmd/api
   - pkg/client/unversioned/clientcmd/api/latest
   - pkg/client/unversioned/clientcmd/api/v1
-  - pkg/client/unversioned/remotecommand
   - pkg/conversion
   - pkg/conversion/queryparams
   - pkg/fields
   - pkg/genericapiserver/openapi/common
-  - pkg/httplog
   - pkg/kubelet/qos
-  - pkg/kubelet/server/remotecommand
   - pkg/kubelet/types
   - pkg/labels
   - pkg/master/ports
@@ -369,14 +315,10 @@ imports:
   - pkg/util/config
   - pkg/util/diff
   - pkg/util/errors
-  - pkg/util/exec
   - pkg/util/flowcontrol
   - pkg/util/framer
   - pkg/util/homedir
-  - pkg/util/httpstream
-  - pkg/util/httpstream/spdy
   - pkg/util/integer
-  - pkg/util/interrupt
   - pkg/util/intstr
   - pkg/util/json
   - pkg/util/jsonpath
@@ -386,13 +328,10 @@ imports:
   - pkg/util/rand
   - pkg/util/runtime
   - pkg/util/sets
-  - pkg/util/strategicpatch
-  - pkg/util/term
   - pkg/util/uuid
   - pkg/util/validation
   - pkg/util/validation/field
   - pkg/util/wait
-  - pkg/util/wsstream
   - pkg/util/yaml
   - pkg/version
   - pkg/watch
@@ -400,8 +339,6 @@ imports:
   - plugin/pkg/client/auth
   - plugin/pkg/client/auth/gcp
   - plugin/pkg/client/auth/oidc
-  - third_party/forked/golang/json
-  - third_party/forked/golang/netutil
   - third_party/forked/golang/reflect
   - third_party/forked/golang/template
 testImports:
