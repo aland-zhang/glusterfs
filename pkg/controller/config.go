@@ -1,4 +1,4 @@
-package gluster
+package controller
 
 import "k8s.io/kubernetes/pkg/client/restclient"
 

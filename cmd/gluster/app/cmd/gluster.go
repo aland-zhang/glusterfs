@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/appscode/glusterfs/pkg/gluster"
+	"github.com/appscode/glusterfs/pkg/controller"
 	"github.com/appscode/log"
 	"github.com/spf13/cobra"
 	"k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
@@ -9,8 +9,8 @@ import (
 )
 
 func NewCmdRun() *cobra.Command {
-	config := &gluster.Config{}
-	cmd := &cobra.Command{
+	config := &controller.Config{}
+	runCmd := &cobra.Command{
 		Use:   "run",
 		Short: "Run Postgres in Kubernetes",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -21,12 +21,12 @@ func NewCmdRun() *cobra.Command {
 			defer runtime.HandleCrash()
 			config.RESTConfig = rest
 
-			controller := gluster.NewController(config)
+			controller := controller.NewController(config)
 			controller.Run()
 		},
 	}
-	cmd.Flags().StringVar(&config.Master, "master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
-	cmd.Flags().StringVar(&config.KubeConfig, "kube-config", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+	runCmd.Flags().StringVar(&config.Master, "master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
+	runCmd.Flags().StringVar(&config.KubeConfig, "kube-config", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
 
-	return cmd
+	return runCmd
 }

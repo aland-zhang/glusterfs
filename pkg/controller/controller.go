@@ -1,4 +1,4 @@
-package gluster
+package controller
 
 import (
 	"fmt"
@@ -96,6 +96,7 @@ func (c *Controller) ensureResource() {
 				// This should fail if there is one third party resource data missing.
 				log.Fatalln(tpr.Name, "failed to create, causes", err.Error())
 			}
+			time.Sleep(time.Second * 5)
 		}
 	}
 }
