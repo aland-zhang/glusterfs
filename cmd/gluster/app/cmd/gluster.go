@@ -26,7 +26,7 @@ func NewCmdRun() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVar(&config.Master, "master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
-	cmd.Flags().StringVar(&config.KubeConfig, "kubeconfig", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+	cmd.Flags().StringVar(&config.KubeConfig, "kube-config", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
 
 	return cmd
 }
