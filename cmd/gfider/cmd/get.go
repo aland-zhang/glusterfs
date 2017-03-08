@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/appscode/glusterfs/pkg/gfid/lib"
+	"github.com/appscode/glusterfs/pkg/gfid"
 	"github.com/appscode/log"
 	"github.com/spf13/cobra"
 )
@@ -19,12 +19,12 @@ func NewCmdGet() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 			if brick != "" {
-				gfids, err = lib.GetGFIDs(vol, brick)
+				gfids, err = gfid.GetGFIDs(vol, brick)
 				if err != nil {
 					log.Fatalln(err)
 				}
 			}
-			err = lib.Get(gfidDir, gfids)
+			err = gfid.Get(gfidDir, gfids)
 			if err != nil {
 				log.Fatalln(err)
 			}

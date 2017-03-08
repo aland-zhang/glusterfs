@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/appscode/glusterfs/pkg/gfid/lib"
+	"github.com/appscode/glusterfs/pkg/gfid"
 	"github.com/appscode/log"
 	"github.com/spf13/cobra"
 )
@@ -11,7 +11,7 @@ func NewCmdDescribe() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "describe",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := lib.PrintSubvolumes(vol)
+			err := gfid.PrintSubvolumes(vol)
 			if err != nil {
 				log.Fatalln(err)
 			}

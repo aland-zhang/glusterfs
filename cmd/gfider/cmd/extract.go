@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/appscode/glusterfs/pkg/gfid/lib"
+	"github.com/appscode/glusterfs/pkg/gfid"
 	"github.com/appscode/go/flags"
 	"github.com/appscode/log"
 	"github.com/spf13/cobra"
@@ -19,7 +19,7 @@ func NewCmdExtract() *cobra.Command {
 		Use: "extract",
 		Run: func(cmd *cobra.Command, args []string) {
 			flags.EnsureRequiredFlags(cmd, "data-dir")
-			err := lib.Extract(dataDir, gfidDir, computeChecksum)
+			err := gfid.Extract(dataDir, gfidDir, computeChecksum)
 			if err != nil {
 				log.Fatalln(err)
 			}

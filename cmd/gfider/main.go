@@ -6,7 +6,7 @@ import (
 	_ "net/http/pprof"
 	"os"
 
-	gfidCmd "github.com/appscode/glusterfs/pkg/gfid/cmd"
+	gfidCmd "github.com/appscode/glusterfs/cmd/gfider/cmd"
 	"github.com/appscode/go/version"
 	logs "github.com/appscode/log/golog"
 	"github.com/spf13/cobra"

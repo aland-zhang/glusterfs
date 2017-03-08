@@ -1,4 +1,4 @@
-package lib
+package gfid
 
 import (
 	"encoding/hex"

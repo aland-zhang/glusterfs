@@ -1,4 +1,4 @@
-package lib
+package gfid
 
 import (
 	"crypto/md5"
