@@ -1,5 +1,5 @@
 hash: 7625d902ef4e0864fd7271c2f91368cbbe32a192e3decb9ab1bc4d078f0a940b
-updated: 2017-02-26T15:03:26.43043581-08:00
+updated: 2017-03-08T11:45:00.604374438+06:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -16,8 +16,10 @@ imports:
   - hold
   - version
 - name: github.com/appscode/k8s-addons
-  version: 6c456dc8cb1c02a834c55d910330176569bfb62a
+  version: 2feea95b0d62ad215bef8d0789978be7c9d58d06
   subpackages:
+  - api
+  - api/install
   - pkg/election
   - pkg/stash
 - name: github.com/appscode/log
@@ -74,7 +76,7 @@ imports:
   subpackages:
   - spdy
 - name: github.com/dustin/go-humanize
-  version: f3565c9525600a911af3bd34f8b535ea81b2a9e0
+  version: 259d2a102b871d17f30e3cd9881a642961a1e486
 - name: github.com/emicklei/go-restful
   version: 89ef8af493ab468a45a42bb0d89a06fccdd2fb22
   subpackages:
@@ -152,7 +154,7 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/mattn/go-runewidth
-  version: e882a96ec18dd43fa283187b66af74497c9101c0
+  version: d6bea18f789704b5f83375793155289da36a3c7f
 - name: github.com/mikespook/golib
   version: 38fe6917d34b267a79c3432369e7dcc379e2d5b3
   subpackages:
@@ -162,7 +164,7 @@ imports:
 - name: github.com/mitchellh/go-wordwrap
   version: ad45545899c7b13c020ea92b2072220eefad42b8
 - name: github.com/olekukonko/tablewriter
-  version: cca8bbc0798408af109aaaa239cbd2634846b340
+  version: febf2d34b54a69ce7530036c7503b1c9fbfdf0bb
 - name: github.com/pborman/uuid
   version: ca53cad383cad2479bbba7f7a1a05797ec1386e4
 - name: github.com/PuerkitoBio/purell
@@ -172,11 +174,13 @@ imports:
 - name: github.com/Sirupsen/logrus
   version: 51fe59aca108dc5680109e7b2051cbdcfa5a253c
 - name: github.com/spf13/cobra
-  version: 9c28e4bbd74e5c3ed7aacbc552b2cab7cfdfe744
+  version: f62e98d28ab7ad31d707ba837a966378465c7b57
+  subpackages:
+  - doc
 - name: github.com/spf13/pflag
-  version: c7e63cf4530bcd3ba943729cee0efeff2ebea63f
+  version: 5ccb023bc27df288a957c5e994cd44fd19619465
 - name: github.com/syndtr/goleveldb
-  version: 23851d93a2292dcc56e71a18ec9e0624d84a0f65
+  version: 3c5717caf1475fd25964109a0fc640bd150fce43
   subpackages:
   - leveldb
   - leveldb/cache
@@ -266,7 +270,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
 - name: k8s.io/kubernetes
-  version: 029c3a408176b55c30846f0faedf56aae5992e9b
+  version: 00a1fb254bd8e5235575fba1398b958943e39078
   subpackages:
   - pkg/api
   - pkg/api/errors
@@ -333,6 +337,7 @@ imports:
   - pkg/client/metrics
   - pkg/client/record
   - pkg/client/restclient
+  - pkg/client/testing/core
   - pkg/client/transport
   - pkg/client/typed/discovery
   - pkg/client/unversioned/auth
@@ -401,4 +406,12 @@ imports:
   - third_party/forked/golang/netutil
   - third_party/forked/golang/reflect
   - third_party/forked/golang/template
-testImports: []
+testImports:
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert

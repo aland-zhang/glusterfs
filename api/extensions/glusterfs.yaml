@@ -1,0 +1,7 @@
+metadata:
+  name: glusterfs.appscode.com
+apiVersion: extensions/v1beta1
+kind: ThirdPartyResource
+description: "GlusterFS Volume support for Kubernetes by appscode.com"
+versions:
+  - name: v1beta1

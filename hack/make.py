@@ -84,12 +84,12 @@ def version():
 
 def fmt():
     libbuild.ungroup_go_imports('cmd', 'pkg')
-    die(call('goimports -w cmd pkg'))
-    call('gofmt -s -w cmd pkg')
+    die(call('goimports -w cmd pkg api client'))
+    call('gofmt -s -w cmd pkg api client')
 
 
 def vet():
-    call('go vet ./cmd/... ./pkg/...')
+    call('go vet ./cmd/... ./pkg/... ./api/... ./client/...')
 
 
 def lint():
@@ -153,13 +153,13 @@ def update_registry():
 
 
 def install():
-    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install ./cmd/...'))
+    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install ./cmd/... ./api/... ./client/...'))
 
 
 def default():
     gen()
     fmt()
-    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install ./cmd/...'))
+    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install ./cmd/... ./api/... ./client/...'))
 
 
 if __name__ == "__main__":
