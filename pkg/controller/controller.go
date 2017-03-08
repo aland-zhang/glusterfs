@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/appscode/glusterfs/api"
@@ -54,15 +53,9 @@ func (c *Controller) Run() {
 		&api.Glusterfs{},
 		c.SyncPeriod,
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
-				fmt.Println("Do Things When Added")
-			},
-			DeleteFunc: func(obj interface{}) {
-				fmt.Println("Do Things When Deleted")
-			},
-			UpdateFunc: func(old, new interface{}) {
-				fmt.Println("Do Things When Updated")
-			},
+			AddFunc: c.create,
+			DeleteFunc: c.delete,
+			UpdateFunc: c.update,
 		},
 	)
 	controller.Run(wait.NeverStop)

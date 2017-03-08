@@ -22,9 +22,12 @@ type GlusterfsList struct {
 	unversioned.ListMeta `json:"metadata,omitempty"`
 
 	// Items is the list of Glusterfs.
-	Items []Glusterfs `json:"items"`
+	Items []Glusterfs `json:"items,omitempty"`
 }
 
-type GlusterFSSpec struct{}
+type GlusterFSSpec struct{
+	Replica int `json:"replica,omitempty"`
+
+}
 
 type GlusterFSStatus struct{}
