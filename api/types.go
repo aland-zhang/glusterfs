@@ -25,9 +25,21 @@ type GlusterfsList struct {
 	Items []Glusterfs `json:"items,omitempty"`
 }
 
-type GlusterFSSpec struct{
-	Replica int `json:"replica,omitempty"`
-
+type GlusterFSSpec struct {
+	Replicas int32                `json:"replicas,omitempty"`
+	Zone     int32                `json:"zone,omitempty"`
+	Storage  GlusterfsStorageSpec `json:"storage,omitempty"`
 }
 
-type GlusterFSStatus struct{}
+type GlusterfsStorageSpec struct {
+	// Name of the StorageClass to use when requesting storage provisioning.
+	StorageClass string `json:"storageClass"`
+
+	VolumeClaimTemplates api.PersistentVolumeClaimSpec `json:"volumeClaimTemplates,omitempty"`
+}
+
+type GlusterFSStatus struct {
+	StatefulSetName   string `json:"statefulSetName,omitempty"`
+	ServiceName       string `json:"serviceName,omitempty"`
+	GlusterFSEndpoint string `json:"glusterfsEndpoint"`
+}
