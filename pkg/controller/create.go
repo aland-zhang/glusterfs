@@ -25,31 +25,25 @@ var (
 )
 
 func (c *Controller) create(obj interface{}) {
-	if gfs, ok := obj.(*api.Glusterfs); ok && c.validate(gfs) {
-		// The Service Must Create Before The StatefulSet
-		if err := c.createService(gfs); err != nil {
-			log.Errorln("Failed to create Service, cause", err)
-			return
+	if gfs, ok := obj.(*api.Glusterfs); ok {
+		if c.validate(gfs) {
+			// The Service Must Create Before The StatefulSet
+			if err := c.createService(gfs); err != nil {
+				log.Errorln("Failed to create Service, cause", err)
+				return
+			}
+
+			if err := c.createStatefulSet(gfs); err != nil {
+				log.Errorln("Failed to Create GlusterFS StatefulSets, cause", err)
+				return
+			}
+		} else {
+			log.Errorln("GlusterFS Resource is not valid, removing")
+			c.ExtClient.Glusterfs(gfs.Namespace).Delete(gfs.Name)
 		}
-
-		if err := c.createStatefulSet(gfs); err != nil {
-			log.Errorln("Failed to Create GlusterFS StatefulSets, cause", err)
-			return
-		}
-
-
-
 	} else {
 		log.Errorln("Failed to assert Object to Glusterfs")
 	}
-}
-
-func (c *Controller) delete(obj interface{}) {
-
-}
-
-func (c *Controller) update(old, new interface{}) {
-
 }
 
 func (c *Controller) createService(gfs *api.Glusterfs) error {
@@ -61,9 +55,10 @@ func (c *Controller) createService(gfs *api.Glusterfs) error {
 			Annotations: gfs.Annotations,
 		},
 		Spec: kapi.ServiceSpec{
-			Type:     kapi.ServiceType(kapi.ClusterIPNone),
-			Selector: getSelectorLabels(gfs),
-			Ports:    servicePorts(),
+			Type:      kapi.ServiceTypeClusterIP,
+			Selector:  getSelectorLabels(gfs),
+			Ports:     servicePorts(),
+			ClusterIP: kapi.ClusterIPNone,
 		},
 	}
 

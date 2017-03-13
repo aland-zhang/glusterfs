@@ -69,6 +69,7 @@ func (c *Controller) Run() {
 			UpdateFunc: c.update,
 		},
 	)
+	log.Infoln("Running Gluster Controller")
 	controller.Run(wait.NeverStop)
 }
 
@@ -94,6 +95,7 @@ func (c *Controller) ensureResource() {
 					},
 				},
 			}
+			log.Infoln("Creating TPR for", tpr.Name)
 			_, err := c.Client.Extensions().ThirdPartyResources().Create(tpr)
 			if err != nil {
 				// This should fail if there is one third party resource data missing.

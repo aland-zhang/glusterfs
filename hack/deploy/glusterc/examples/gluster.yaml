@@ -1,0 +1,16 @@
+apiVersion: appscode.com/v1beta1
+kind: Glusterfs
+metadata:
+  name: test
+  namespace: default
+  labels:
+    run: glusterfs
+spec:
+  replicas: 2
+  storage:
+    storageClass: gp2
+    volumeClaimTemplates:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
