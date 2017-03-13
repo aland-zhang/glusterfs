@@ -6,6 +6,7 @@ import (
 	"github.com/appscode/glusterfs/api"
 	gluserclientset "github.com/appscode/glusterfs/client/clientset"
 	"github.com/appscode/log"
+	heketi "github.com/heketi/heketi/client/api/go-client"
 	kapi "k8s.io/kubernetes/pkg/api"
 	k8serrors "k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/api/unversioned"
@@ -25,16 +26,26 @@ type Controller struct {
 	// sync time to sync the list.
 	SyncPeriod time.Duration
 
+	HeketiClient *heketi.Client
+
 	config *Config
 }
 
 func NewController(c *Config) *Controller {
-	return &Controller{
-		Client:     clientset.NewForConfigOrDie(c.RESTConfig),
-		ExtClient:  gluserclientset.NewGlusterfsExtensionsForConfigOrDie(c.RESTConfig),
-		SyncPeriod: time.Minute * 2,
-		config:     c,
+	ctrl := &Controller{
+		Client:       clientset.NewForConfigOrDie(c.RESTConfig),
+		ExtClient:    gluserclientset.NewGlusterfsExtensionsForConfigOrDie(c.RESTConfig),
+		SyncPeriod:   time.Minute * 2,
+		config:       c,
+		HeketiClient: heketi.NewClientNoAuth(c.HeketiUrl),
 	}
+
+	// Check Heketi Communication Before Start
+	if err := ctrl.HeketiClient.Hello(); err != nil {
+		// Fail if heketi response with error
+		log.Fatalln("Failed to Communicate with Heketi, cause", err)
+	}
+	return ctrl
 }
 
 // Blocks caller.
@@ -53,7 +64,7 @@ func (c *Controller) Run() {
 		&api.Glusterfs{},
 		c.SyncPeriod,
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: c.create,
+			AddFunc:    c.create,
 			DeleteFunc: c.delete,
 			UpdateFunc: c.update,
 		},
@@ -61,11 +72,10 @@ func (c *Controller) Run() {
 	controller.Run(wait.NeverStop)
 }
 
-var resourceList = []string{
-	"glusterfs",
-}
-
 func (c *Controller) ensureResource() {
+	var resourceList = []string{
+		"glusterfs",
+	}
 	for _, resource := range resourceList {
 		// This is version dependent
 		_, err := c.Client.Extensions().ThirdPartyResources().Get(resource + "." + api.V1Beta1SchemeGroupVersion.Group)

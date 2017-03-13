@@ -9,7 +9,7 @@ import (
 )
 
 func NewCmdRun() *cobra.Command {
-	config := &controller.Config{}
+	config := controller.NewConfig()
 	runCmd := &cobra.Command{
 		Use:   "run",
 		Short: "Run Postgres in Kubernetes",
@@ -25,8 +25,10 @@ func NewCmdRun() *cobra.Command {
 			controller.Run()
 		},
 	}
-	runCmd.Flags().StringVar(&config.Master, "master", "", "The address of the Kubernetes API server (overrides any value in kubeconfig)")
-	runCmd.Flags().StringVar(&config.KubeConfig, "kube-config", "", "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+	runCmd.Flags().StringVar(&config.Master, "master", config.Master, "The address of the Kubernetes API server (overrides any value in kubeconfig)")
+	runCmd.Flags().StringVar(&config.KubeConfig, "kube-config", config.KubeConfig, "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+	runCmd.Flags().StringVar(&config.HeketiUrl, "heketi-url", config.HeketiUrl, "Heketi Server URL")
+	runCmd.Flags().StringVar(&config.GlusterFSImage, "glusterfs-image", config.GlusterFSImage, "GlusterFS Image name to run")
 
 	return runCmd
 }

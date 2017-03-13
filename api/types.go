@@ -42,4 +42,5 @@ type GlusterFSStatus struct {
 	StatefulSetName   string `json:"statefulSetName,omitempty"`
 	ServiceName       string `json:"serviceName,omitempty"`
 	GlusterFSEndpoint string `json:"glusterfsEndpoint"`
+	HeketiClusterID   string `json:"heketiClusterId"`
 }
