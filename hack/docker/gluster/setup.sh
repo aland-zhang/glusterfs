@@ -14,7 +14,7 @@ BIN=$GOPATH/bin
 ROOT=$GOPATH
 
 APPSCODE_ENV=${APPSCODE_ENV:-dev}
-IMG=glusterc
+IMG=gluster
 
 DIST=$GOPATH/src/github.com/appscode/glusterfs/dist
 mkdir -p $DIST
@@ -23,23 +23,23 @@ if [ -f "$DIST/.tag" ]; then
 fi
 
 clean() {
-    pushd $GOPATH/src/github.com/appscode/glusterfs/hack/docker/glusterc
-	rm -rf glusterc
+    pushd $GOPATH/src/github.com/appscode/glusterfs/hack/docker/gluster
+	rm -rf gluster
 	popd
 }
 
 build_binary() {
 	pushd $GOPATH/src/github.com/appscode/glusterfs
 	./hack/builddeps.sh
-    ./hack/make.py build glusterc
+    ./hack/make.py build gluster
 	detect_tag $DIST/.tag
 	popd
 }
 
 build_docker() {
-	pushd $GOPATH/src/github.com/appscode/glusterfs/hack/docker/glusterc
-	cp $DIST/glusterc/glusterc-linux-amd64 glusterc
-	chmod 755 glusterc
+	pushd $GOPATH/src/github.com/appscode/glusterfs/hack/docker/gluster
+	cp $DIST/gluster/gluster-linux-amd64 gluster
+	chmod 755 gluster
 
 	cat >Dockerfile <<EOL
 FROM appscode/base:8.7
@@ -49,13 +49,13 @@ RUN set -x \
   && apt-get install -y --no-install-recommends ca-certificates \
   && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man /tmp/*
 
-COPY glusterc /glusterc
-ENTRYPOINT ["/glusterc"]
+COPY gluster /gluster
+ENTRYPOINT ["/gluster"]
 EOL
 	local cmd="docker build -t appscode/$IMG:$TAG ."
 	echo $cmd; $cmd
 
-	rm glusterc Dockerfile
+	rm gluster Dockerfile
 	popd
 }
 

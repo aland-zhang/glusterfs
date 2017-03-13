@@ -46,7 +46,7 @@ libbuild.BIN_MATRIX = {
             'linux': ['amd64']
         }
     },
-    'glusterc': {
+    'gluster': {
         'type': 'go',
         'go_version': True,
         'use_cgo': False,
