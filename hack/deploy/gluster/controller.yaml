@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: appscode-gluster
+  name: appscode-gluster
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appscode-gluster
+  template:
+    metadata:
+      labels:
+        app: appscode-gluster
+    spec:
+      containers:
+      - name: appscode-heketi
+        image: appscode/heketi:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      - name: appscode-gluster
+        image: appscode/gluster:knight
+        args:
+        - run
+        - --v=5
+        env:
+        - name: K8S_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: K8S_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        imagePullPolicy: Always
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: appscode-gluster
+spec:
+  selector:
+    app: appscode-gluster
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

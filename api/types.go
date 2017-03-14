@@ -27,7 +27,7 @@ type GlusterfsList struct {
 
 type GlusterFSSpec struct {
 	Replicas int32                `json:"replicas,omitempty"`
-	Zone     int32                `json:"zone,omitempty"`
+	Zone     int                  `json:"zone,omitempty"`
 	Storage  GlusterfsStorageSpec `json:"storage,omitempty"`
 }
 

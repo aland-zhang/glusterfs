@@ -21,14 +21,16 @@ func NewCmdRun() *cobra.Command {
 			defer runtime.HandleCrash()
 			config.RESTConfig = rest
 
-			controller := controller.NewController(config)
-			controller.Run()
+			cntrl := controller.NewController(config)
+			cntrl.Run()
 		},
 	}
 	runCmd.Flags().StringVar(&config.Master, "master", config.Master, "The address of the Kubernetes API server (overrides any value in kubeconfig)")
-	runCmd.Flags().StringVar(&config.KubeConfig, "kube-config", config.KubeConfig, "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
+	runCmd.Flags().StringVar(&config.KubeConfig, "kubeconfig", config.KubeConfig, "Path to kubeconfig file with authorization information (the master location is set by the master flag).")
 	runCmd.Flags().StringVar(&config.HeketiUrl, "heketi-url", config.HeketiUrl, "Heketi Server URL")
 	runCmd.Flags().StringVar(&config.GlusterFSImage, "glusterfs-image", config.GlusterFSImage, "GlusterFS Image name to run")
+	runCmd.Flags().StringVar(&config.ClusterDomain, "cluster-domain", config.ClusterDomain, "Cluster domain. Default cluster.local")
+	runCmd.Flags().StringVar(&config.HeketiServiceName, "service-name", config.HeketiServiceName, "Heketi Service Name")
 
 	return runCmd
 }

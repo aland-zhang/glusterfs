@@ -2,12 +2,20 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
+	"sort"
+	"strconv"
+	"strings"
+
 	"github.com/appscode/glusterfs/api"
 	"github.com/appscode/log"
+	heketiapi "github.com/heketi/heketi/pkg/glusterfs/api"
 	kapi "k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
 	"k8s.io/kubernetes/pkg/apis/apps"
-	"strconv"
+	"k8s.io/kubernetes/pkg/apis/storage"
+	"k8s.io/kubernetes/pkg/labels"
+	"time"
 )
 
 const (
@@ -25,16 +33,27 @@ var (
 )
 
 func (c *Controller) create(obj interface{}) {
+	context := &options{}
 	if gfs, ok := obj.(*api.Glusterfs); ok {
-		if c.validate(gfs) {
+		if c.validate(context, gfs) {
 			// The Service Must Create Before The StatefulSet
-			if err := c.createService(gfs); err != nil {
+			if err := c.createService(context, gfs); err != nil {
 				log.Errorln("Failed to create Service, cause", err)
 				return
 			}
 
-			if err := c.createStatefulSet(gfs); err != nil {
+			if err := c.createStatefulSet(context, gfs); err != nil {
 				log.Errorln("Failed to Create GlusterFS StatefulSets, cause", err)
+				return
+			}
+			c.waitForPodsToRun(context, gfs)
+			if err := c.addNewHeketiCluster(context, gfs); err != nil {
+				log.Errorln("Failed to Create GlusterFS StatefulSets, cause", err)
+				return
+			}
+
+			if err := c.addStorageClass(context, gfs); err != nil {
+				log.Errorln("Failed to Create StorageClass, cause", err)
 				return
 			}
 		} else {
@@ -46,7 +65,7 @@ func (c *Controller) create(obj interface{}) {
 	}
 }
 
-func (c *Controller) createService(gfs *api.Glusterfs) error {
+func (c *Controller) createService(ctx *options, gfs *api.Glusterfs) error {
 	svc := &kapi.Service{
 		ObjectMeta: kapi.ObjectMeta{
 			Name:        GlusterFSResourcePrefix + gfs.Name,
@@ -69,7 +88,7 @@ func (c *Controller) createService(gfs *api.Glusterfs) error {
 	return nil
 }
 
-func (c *Controller) createStatefulSet(gfs *api.Glusterfs) error {
+func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
 	statefulSet := &apps.StatefulSet{
 		ObjectMeta: kapi.ObjectMeta{
 			Name:        GlusterFSResourcePrefix + gfs.Name,
@@ -128,7 +147,120 @@ func (c *Controller) createStatefulSet(gfs *api.Glusterfs) error {
 	return nil
 }
 
-func (c *Controller) validate(gfs *api.Glusterfs) bool {
+func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error {
+	cluster, err := c.HeketiClient.ClusterCreate()
+	if err != nil {
+		return err
+	}
+
+	// Create a cleanup function in case no
+	// nodes or devices are created
+	defer func() {
+		// Get cluster information
+		info, err := c.HeketiClient.ClusterInfo(cluster.Id)
+		// Delete empty cluster
+		if err == nil && len(info.Nodes) == 0 && len(info.Volumes) == 0 {
+			c.HeketiClient.ClusterDelete(cluster.Id)
+		}
+	}()
+	log.Infoln("Cluster Created, Cluster ID", cluster.Id)
+	ctx.heketiOptions.ClusterID = cluster.Id
+	pods, err := c.Client.Core().Pods(gfs.Namespace).List(kapi.ListOptions{
+		LabelSelector: labels.SelectorFromSet(getSelectorLabels(gfs)),
+	})
+
+	ctx.heketiOptions.NodeIDMap = make(map[string]string)
+	for {
+		for _, pod := range pods.Items {
+			if _, ok := ctx.heketiOptions.NodeIDMap[pod.Name]; !ok {
+				fqdn := strings.Join([]string{
+					pod.Name,
+					GlusterFSResourcePrefix + gfs.Name,
+					pod.Namespace,
+					"svc",
+					c.config.ClusterDomain,
+				}, ".")
+				log.Infoln("Adding Node with host name", fqdn)
+				req := &heketiapi.NodeAddRequest{
+					Zone:      gfs.Spec.Zone,
+					ClusterId: cluster.Id,
+					Hostnames: heketiapi.HostAddresses{
+						Manage:  sort.StringSlice([]string{fqdn}),
+						Storage: sort.StringSlice([]string{fqdn}),
+					},
+				}
+				if req.Zone <= 0 {
+					req.Zone = 1
+				}
+				node, err := c.HeketiClient.NodeAdd(req)
+				if err != nil {
+					log.Infoln("Add Node Failed with reason", err)
+					continue
+				}
+				ctx.heketiOptions.NodeIDMap[pod.Name] = node.Id
+			}
+		}
+		if len(ctx.heketiOptions.NodeIDMap) == len(pods.Items) {
+			break
+		}
+		log.Infoln("All Node not added, retring...")
+		time.Sleep(time.Second*20)
+	}
+	log.Infoln("All node Added in the cluster")
+	return nil
+}
+
+func (c *Controller) addStorageClass(ctx *options, gfs *api.Glusterfs) error {
+	sc := &storage.StorageClass{
+		ObjectMeta: kapi.ObjectMeta{
+			Name: GlusterFSResourcePrefix + gfs.Name,
+		},
+		Provisioner: "kubernetes.io/glusterfs",
+		Parameters: map[string]string{
+			"resturl": fmt.Sprintf("http://%s:8080", c.config.heketiServiceIP),
+			// "clusterid": ctx.heketiOptions.ClusterID,
+		},
+	}
+
+	_, err := c.Client.Storage().StorageClasses().Create(sc)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Controller) waitForPodsToRun(ctx *options, gfs *api.Glusterfs) {
+	// TODO (@sadlil): Should we add a max retry limit?
+	for {
+		pods, err := c.Client.Core().Pods(gfs.Namespace).List(kapi.ListOptions{
+			LabelSelector: labels.SelectorFromSet(getSelectorLabels(gfs)),
+		})
+		if err != nil {
+			log.Infoln("Pod list encountered with error ", err, "waiting...")
+			time.Sleep(time.Second * 20)
+			continue
+		}
+
+		if int32(len(pods.Items)) < gfs.Spec.Replicas {
+			log.Infoln("Pod count mismatched, waiting...")
+			time.Sleep(time.Second * 20)
+			continue
+		}
+
+		if int32(len(pods.Items)) == gfs.Spec.Replicas {
+			for _, pod := range pods.Items {
+				if pod.Status.Phase != kapi.PodRunning || len(pod.Status.PodIP) == 0 {
+					log.Infoln("Pod", pod.Name, "not running, waiting...")
+					time.Sleep(time.Second * 20)
+					continue
+				}
+			}
+		}
+		break
+	}
+}
+
+func (c *Controller) validate(ctx *options, gfs *api.Glusterfs) bool {
 	if gfs == nil {
 		log.Errorln("GlusterFS resource can not be nil")
 		return false

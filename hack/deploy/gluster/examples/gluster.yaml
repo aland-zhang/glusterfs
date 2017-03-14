@@ -4,7 +4,7 @@ metadata:
   name: test
   namespace: default
   labels:
-    run: glusterfs
+    app: glusterfs
 spec:
   replicas: 2
   storage:
@@ -13,4 +13,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 10Gi
+          storage: 50Gi

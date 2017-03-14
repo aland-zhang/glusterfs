@@ -31,6 +31,16 @@ type Controller struct {
 	config *Config
 }
 
+type options struct {
+	modifiedGFS   *api.Glusterfs
+	heketiOptions heketiOptions
+}
+
+type heketiOptions struct {
+	ClusterID string
+	NodeIDMap map[string]string
+}
+
 func NewController(c *Config) *Controller {
 	ctrl := &Controller{
 		Client:       clientset.NewForConfigOrDie(c.RESTConfig),
@@ -40,11 +50,24 @@ func NewController(c *Config) *Controller {
 		HeketiClient: heketi.NewClientNoAuth(c.HeketiUrl),
 	}
 
+	// Lets wait sometime for the service and heketi container to be initalized
+	time.Sleep(time.Second*20)
+
 	// Check Heketi Communication Before Start
 	if err := ctrl.HeketiClient.Hello(); err != nil {
 		// Fail if heketi response with error
 		log.Fatalln("Failed to Communicate with Heketi, cause", err)
 	}
+
+	svc, err := ctrl.Client.Core().Services(c.K8sPodNamespace).Get(c.HeketiServiceName)
+	if err != nil {
+		log.Fatalln("Failed to load Heketi service, cause", err)
+	}
+	if len(svc.Spec.ClusterIP) == 0 {
+		log.Fatal("Service do not have a IP yet")
+	}
+	ctrl.config.heketiServiceIP = svc.Spec.ClusterIP
+
 	return ctrl
 }
 
