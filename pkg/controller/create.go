@@ -120,7 +120,28 @@ func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
 								{
 									Name:      GlusterFSResourcePrefix + gfs.Name,
 									MountPath: "/storage",
+									// SubPath: "gfs",
 								},
+								//{
+								//	Name:      GlusterFSResourcePrefix + gfs.Name,
+								//	MountPath: "/dev",
+								//	SubPath: "glusterdev",
+								//},
+								//{
+								//	Name:      GlusterFSResourcePrefix + gfs.Name,
+								//	MountPath: "/var/lib/misc/glusterfsd",
+								//	SubPath: "glusterfmisc",
+								//},
+								//{
+								//	Name:      GlusterFSResourcePrefix + gfs.Name,
+								//	MountPath: "/sys/fs/cgroup",
+								//	SubPath: "cgroup",
+								//},
+								//{
+								//	Name:      GlusterFSResourcePrefix + gfs.Name,
+								//	MountPath: "/etc/glusterfs",
+								//	SubPath: "glusteretc",
+								//},
 							},
 						},
 					},
@@ -205,6 +226,17 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 		}
 		log.Infoln("All Node not added, retring...")
 		time.Sleep(time.Second*20)
+	}
+
+	for _, v := range ctx.heketiOptions.NodeIDMap {
+		deviceAddReq := &heketiapi.DeviceAddRequest{
+			Device: heketiapi.Device{Name: "/dev"},
+			NodeId: v,
+		}
+		err = c.HeketiClient.DeviceAdd(deviceAddReq)
+		if err != nil {
+			log.Errorln("Device add faild with error", err)
+		}
 	}
 	log.Infoln("All node Added in the cluster")
 	return nil
