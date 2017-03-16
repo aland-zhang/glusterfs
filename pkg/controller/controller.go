@@ -51,7 +51,7 @@ func NewController(c *Config) *Controller {
 	}
 
 	// Lets wait sometime for the service and heketi container to be initalized
-	time.Sleep(time.Second*20)
+	time.Sleep(time.Second * 20)
 
 	// Check Heketi Communication Before Start
 	if err := ctrl.HeketiClient.Hello(); err != nil {
@@ -74,6 +74,9 @@ func NewController(c *Config) *Controller {
 // Blocks caller.
 func (c *Controller) Run() {
 	c.ensureResource()
+
+	pvc := NewPVCController(c)
+	go pvc.Run()
 
 	lw := &cache.ListWatch{
 		ListFunc: func(opts kapi.ListOptions) (runtime.Object, error) {

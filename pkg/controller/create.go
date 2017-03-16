@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/appscode/glusterfs/api"
 	"github.com/appscode/log"
@@ -15,11 +16,10 @@ import (
 	"k8s.io/kubernetes/pkg/apis/apps"
 	"k8s.io/kubernetes/pkg/apis/storage"
 	"k8s.io/kubernetes/pkg/labels"
-	"time"
 )
 
 const (
-	GlusterFSResourcePrefix = "gfs-"
+	GlusterFSResourcePrefix = "glusterfs-"
 	GlusterDomain           = "gluster"
 	GlusterFSSelectorKey    = "glusterfs.appscode.com"
 )
@@ -202,7 +202,7 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 			if _, ok := ctx.heketiOptions.NodeIDMap[pod.Name]; !ok {
 				fqdn := strings.Join([]string{
 					pod.Name,
-					GlusterFSResourcePrefix + gfs.Name,
+					GlusterDomain,
 					pod.Namespace,
 					"svc",
 					c.config.ClusterDomain,
@@ -251,7 +251,11 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 func (c *Controller) addStorageClass(ctx *options, gfs *api.Glusterfs) error {
 	sc := &storage.StorageClass{
 		ObjectMeta: kapi.ObjectMeta{
-			Name: GlusterFSResourcePrefix + gfs.Name,
+			Name:   GlusterFSResourcePrefix + gfs.Name,
+			Labels: getSelectorLabels(gfs),
+			Annotations: map[string]string{
+				GlusterFSSelectorKey + "/provisioner": "knight",
+			},
 		},
 		Provisioner: "kubernetes.io/glusterfs",
 		Parameters: map[string]string{
@@ -298,7 +302,7 @@ func (c *Controller) waitForPodsToRun(ctx *options, gfs *api.Glusterfs) {
 		}
 		break
 	}
-	time.Sleep(time.Second*20)
+	time.Sleep(time.Second * 20)
 }
 
 func (c *Controller) validate(ctx *options, gfs *api.Glusterfs) bool {
@@ -336,6 +340,7 @@ func getSelectorLabels(gfs *api.Glusterfs) map[string]string {
 
 	// Add Additional Selector Labels
 	selectors[GlusterFSSelectorKey+"/resource"] = gfs.Name
+	selectors[GlusterFSSelectorKey+"/provisioner"] = "knight"
 	return selectors
 }
 
