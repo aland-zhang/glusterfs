@@ -26,6 +26,10 @@ type GlusterfsList struct {
 }
 
 type GlusterFSSpec struct {
+	// TODO(@sadlil) Fix this when replica size is variable in kubernetes
+	// https://github.com/kubernetes/kubernetes/blob/release-1.5/pkg/volume/glusterfs/glusterfs.go#L503
+	// This always tells heketi to create 3 replica, but heketi do not allow
+	// creating two bricks in same node. So Replicas must >= 3.
 	Replicas int32                `json:"replicas,omitempty"`
 	Zone     int                  `json:"zone,omitempty"`
 	Storage  GlusterfsStorageSpec `json:"storage,omitempty"`

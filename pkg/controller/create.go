@@ -20,6 +20,7 @@ import (
 
 const (
 	GlusterFSResourcePrefix = "gfs-"
+	GlusterDomain           = "gluster"
 	GlusterFSSelectorKey    = "glusterfs.appscode.com"
 )
 
@@ -37,7 +38,7 @@ func (c *Controller) create(obj interface{}) {
 	if gfs, ok := obj.(*api.Glusterfs); ok {
 		if c.validate(context, gfs) {
 			// The Service Must Create Before The StatefulSet
-			if err := c.createService(context, gfs); err != nil {
+			if err := c.ensureNamespaceService(context, gfs); err != nil {
 				log.Errorln("Failed to create Service, cause", err)
 				return
 			}
@@ -65,30 +66,35 @@ func (c *Controller) create(obj interface{}) {
 	}
 }
 
-func (c *Controller) createService(ctx *options, gfs *api.Glusterfs) error {
-	svc := &kapi.Service{
-		ObjectMeta: kapi.ObjectMeta{
-			Name:        GlusterFSResourcePrefix + gfs.Name,
-			Namespace:   gfs.Namespace,
-			Labels:      gfs.Labels,
-			Annotations: gfs.Annotations,
-		},
-		Spec: kapi.ServiceSpec{
-			Type:      kapi.ServiceTypeClusterIP,
-			Selector:  getSelectorLabels(gfs),
-			Ports:     servicePorts(),
-			ClusterIP: kapi.ClusterIPNone,
-		},
-	}
-
-	_, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
+func (c *Controller) ensureNamespaceService(ctx *options, gfs *api.Glusterfs) error {
+	_, err := c.Client.Core().Services(gfs.Namespace).Get(GlusterDomain)
 	if err != nil {
-		return err
+		svc := &kapi.Service{
+			ObjectMeta: kapi.ObjectMeta{
+				Name:        GlusterDomain,
+				Namespace:   gfs.Namespace,
+				Labels:      gfs.Labels,
+				Annotations: gfs.Annotations,
+			},
+			Spec: kapi.ServiceSpec{
+				Type:      kapi.ServiceTypeClusterIP,
+				ClusterIP: kapi.ClusterIPNone,
+			},
+		}
+
+		_, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
+	replicaCount := int32(3)
+	if gfs.Spec.Replicas > replicaCount {
+		replicaCount = gfs.Spec.Replicas
+	}
 	statefulSet := &apps.StatefulSet{
 		ObjectMeta: kapi.ObjectMeta{
 			Name:        GlusterFSResourcePrefix + gfs.Name,
@@ -97,8 +103,8 @@ func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
 			Annotations: gfs.Annotations,
 		},
 		Spec: apps.StatefulSetSpec{
-			Replicas:    gfs.Spec.Replicas,
-			ServiceName: GlusterFSResourcePrefix + gfs.Name,
+			Replicas:    replicaCount,
+			ServiceName: GlusterDomain,
 			Template: kapi.PodTemplateSpec{
 				ObjectMeta: kapi.ObjectMeta{
 					Labels:      getSelectorLabels(gfs),
@@ -207,7 +213,7 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 					ClusterId: cluster.Id,
 					Hostnames: heketiapi.HostAddresses{
 						Manage:  sort.StringSlice([]string{fqdn}),
-						Storage: sort.StringSlice([]string{fqdn}),
+						Storage: sort.StringSlice([]string{pod.Status.PodIP}),
 					},
 				}
 				if req.Zone <= 0 {
@@ -225,12 +231,12 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 			break
 		}
 		log.Infoln("All Node not added, retring...")
-		time.Sleep(time.Second*20)
+		time.Sleep(time.Second * 20)
 	}
 
 	for _, v := range ctx.heketiOptions.NodeIDMap {
 		deviceAddReq := &heketiapi.DeviceAddRequest{
-			Device: heketiapi.Device{Name: "/dev"},
+			Device: heketiapi.Device{Name: "/storage"},
 			NodeId: v,
 		}
 		err = c.HeketiClient.DeviceAdd(deviceAddReq)
@@ -250,7 +256,9 @@ func (c *Controller) addStorageClass(ctx *options, gfs *api.Glusterfs) error {
 		Provisioner: "kubernetes.io/glusterfs",
 		Parameters: map[string]string{
 			"resturl": fmt.Sprintf("http://%s:8080", c.config.heketiServiceIP),
+			// TODO (@sadlil) Fix those when we use 1.6
 			// "clusterid": ctx.heketiOptions.ClusterID,
+			// "volumetype": fmt.Sprintf("replicate:%v", gfs.Spec.Replicas),
 		},
 	}
 
@@ -290,6 +298,7 @@ func (c *Controller) waitForPodsToRun(ctx *options, gfs *api.Glusterfs) {
 		}
 		break
 	}
+	time.Sleep(time.Second*20)
 }
 
 func (c *Controller) validate(ctx *options, gfs *api.Glusterfs) bool {
@@ -355,15 +364,6 @@ func getAnnotations(gfs *api.Glusterfs) map[string]string {
 	}
 	annotations[GlusterFSSelectorKey+"/resource"] = gfs.Name
 	return annotations
-}
-
-func servicePorts() []kapi.ServicePort {
-	return []kapi.ServicePort{
-		{
-			Name: "port-ep",
-			Port: 1,
-		},
-	}
 }
 
 func containerPorts() []kapi.ContainerPort {

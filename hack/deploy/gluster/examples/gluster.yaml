@@ -6,7 +6,7 @@ metadata:
   labels:
     app: glusterfs
 spec:
-  replicas: 2
+  replicas: 3
   storage:
     storageClass: gp2
     volumeClaimTemplates:
