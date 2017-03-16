@@ -213,7 +213,7 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 					ClusterId: cluster.Id,
 					Hostnames: heketiapi.HostAddresses{
 						Manage:  sort.StringSlice([]string{fqdn}),
-						Storage: sort.StringSlice([]string{pod.Status.PodIP}),
+						Storage: sort.StringSlice([]string{fqdn}),
 					},
 				}
 				if req.Zone <= 0 {
