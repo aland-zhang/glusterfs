@@ -54,7 +54,7 @@ func (p *pvcController) create(obj interface{}) {
 				if err != nil {
 					if storageClass.Annotations != nil {
 						val, ok := storageClass.Annotations["glusterfs.appscode.com/provisioner"]
-						if ok && val == "knight" {
+						if ok && val == "knight" && storageClass.Provisioner == "kubernetes.io/glusterfs" {
 							log.Infoln("PVC Created. Need To create Service and Endpoints")
 							service := &kapi.Service{
 								ObjectMeta: kapi.ObjectMeta{
