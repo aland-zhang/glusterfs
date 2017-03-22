@@ -47,11 +47,13 @@ func (p *pvcController) Run() {
 }
 
 func (p *pvcController) create(obj interface{}) {
+	log.Infoln("Got create event for PVC")
 	if pvc, ok := obj.(*kapi.PersistentVolumeClaim); ok {
 		if pvc.Annotations != nil {
 			if sc, ok := pvc.Annotations[BetaStorageClassKey]; ok {
+				log.Infoln("PVC referenced storageClass", sc)
 				storageClass, err := p.c.Client.Storage().StorageClasses().Get(sc)
-				if err != nil {
+				if err == nil {
 					if storageClass.Annotations != nil {
 						val, ok := storageClass.Annotations["glusterfs.appscode.com/provisioner"]
 						if ok && val == "knight" && storageClass.Provisioner == "kubernetes.io/glusterfs" {
@@ -62,9 +64,11 @@ func (p *pvcController) create(obj interface{}) {
 									Namespace: pvc.Namespace,
 									Labels: map[string]string{
 										"gluster.kubernetes.io/provisioned-for-pvc": pvc.Name,
+										GlusterFSSelectorKey + "/provisioner":       storageClass.Name,
 									},
 								},
 								Spec: kapi.ServiceSpec{
+									ClusterIP: "None",
 									Ports: []kapi.ServicePort{
 										{Protocol: "TCP", Port: 1},
 									},
@@ -77,7 +81,6 @@ func (p *pvcController) create(obj interface{}) {
 								err := p.c.Client.Core().Services(pvc.Namespace).Delete(service.Name, &kapi.DeleteOptions{})
 								if err != nil {
 									log.Errorln("Failed To delete existing service for pvc")
-									return
 								}
 								p.c.Client.Core().Services(pvc.Namespace).Create(service)
 							}

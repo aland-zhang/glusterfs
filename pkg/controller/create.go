@@ -20,7 +20,6 @@ import (
 
 const (
 	GlusterFSResourcePrefix = "glusterfs-"
-	GlusterDomain           = "gluster"
 	GlusterFSSelectorKey    = "glusterfs.appscode.com"
 )
 
@@ -38,7 +37,7 @@ func (c *Controller) create(obj interface{}) {
 	if gfs, ok := obj.(*api.Glusterfs); ok {
 		if c.validate(context, gfs) {
 			// The Service Must Create Before The StatefulSet
-			if err := c.ensureNamespaceService(context, gfs); err != nil {
+			if err := c.createServiceDomain(context, gfs); err != nil {
 				log.Errorln("Failed to create Service, cause", err)
 				return
 			}
@@ -66,26 +65,27 @@ func (c *Controller) create(obj interface{}) {
 	}
 }
 
-func (c *Controller) ensureNamespaceService(ctx *options, gfs *api.Glusterfs) error {
-	_, err := c.Client.Core().Services(gfs.Namespace).Get(GlusterDomain)
-	if err != nil {
-		svc := &kapi.Service{
-			ObjectMeta: kapi.ObjectMeta{
-				Name:        GlusterDomain,
-				Namespace:   gfs.Namespace,
-				Labels:      gfs.Labels,
-				Annotations: gfs.Annotations,
+func (c *Controller) createServiceDomain(ctx *options, gfs *api.Glusterfs) error {
+	svc := &kapi.Service{
+		ObjectMeta: kapi.ObjectMeta{
+			Name:        GlusterFSResourcePrefix + gfs.Name,
+			Namespace:   gfs.Namespace,
+			Labels:      gfs.Labels,
+			Annotations: gfs.Annotations,
+		},
+		Spec: kapi.ServiceSpec{
+			Type:      kapi.ServiceTypeClusterIP,
+			ClusterIP: kapi.ClusterIPNone,
+			Selector:  getSelectorLabels(gfs),
+			Ports: []kapi.ServicePort{
+				{Port: 1, Protocol: "TCP"},
 			},
-			Spec: kapi.ServiceSpec{
-				Type:      kapi.ServiceTypeClusterIP,
-				ClusterIP: kapi.ClusterIPNone,
-			},
-		}
+		},
+	}
 
-		_, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
-		if err != nil {
-			return err
-		}
+	_, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -104,7 +104,7 @@ func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
 		},
 		Spec: apps.StatefulSetSpec{
 			Replicas:    replicaCount,
-			ServiceName: GlusterDomain,
+			ServiceName: GlusterFSResourcePrefix + gfs.Name,
 			Template: kapi.PodTemplateSpec{
 				ObjectMeta: kapi.ObjectMeta{
 					Labels:      getSelectorLabels(gfs),
@@ -202,7 +202,7 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 			if _, ok := ctx.heketiOptions.NodeIDMap[pod.Name]; !ok {
 				fqdn := strings.Join([]string{
 					pod.Name,
-					GlusterDomain,
+					GlusterFSResourcePrefix + gfs.Name,
 					pod.Namespace,
 					"svc",
 					c.config.ClusterDomain,
@@ -213,7 +213,7 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 					ClusterId: cluster.Id,
 					Hostnames: heketiapi.HostAddresses{
 						Manage:  sort.StringSlice([]string{fqdn}),
-						Storage: sort.StringSlice([]string{fqdn}),
+						Storage: sort.StringSlice([]string{pod.Status.PodIP}),
 					},
 				}
 				if req.Zone <= 0 {
