@@ -37,8 +37,7 @@ type options struct {
 }
 
 type heketiOptions struct {
-	ClusterID string
-	NodeIDMap map[string]string
+	api.GlusterFSStatus
 }
 
 func NewController(c *Config) *Controller {

@@ -8,7 +8,7 @@ metadata:
 spec:
   replicas: 3
   storage:
-    storageClass: gp2
+    storageClass: pd-ssd
     volumeClaimTemplates:
       accessModes: [ "ReadWriteOnce" ]
       resources:

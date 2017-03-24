@@ -3,6 +3,7 @@ package api
 import (
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/unversioned"
+	"time"
 )
 
 type Glusterfs struct {
@@ -12,7 +13,8 @@ type Glusterfs struct {
 	// More info: http://releases.k8s.io/release-1.2/docs/devel/api-conventions.md#metadata
 	api.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec GlusterFSSpec `json:"spec,omitempty"`
+	Spec   GlusterFSSpec   `json:"spec,omitempty"`
+	Status GlusterFSStatus `json:"status,omitempty"`
 }
 
 type GlusterfsList struct {
@@ -40,11 +42,23 @@ type GlusterfsStorageSpec struct {
 	StorageClass string `json:"storageClass"`
 
 	VolumeClaimTemplates api.PersistentVolumeClaimSpec `json:"volumeClaimTemplates,omitempty"`
+
+	ClusterOptions ClusterOption `json:"clusterOptions"`
+}
+
+type ClusterOption struct {
+	ClusterDeleteOptions *DeleteOptions `json:"deleteOptions"`
+}
+
+type DeleteOptions struct {
+	DeleteVolumes bool `json:"deleteVolumes,omitempty"`
 }
 
 type GlusterFSStatus struct {
-	StatefulSetName   string `json:"statefulSetName,omitempty"`
-	ServiceName       string `json:"serviceName,omitempty"`
-	GlusterFSEndpoint string `json:"glusterfsEndpoint"`
-	HeketiClusterID   string `json:"heketiClusterId"`
+	CreatedAt          time.Time         `json:"createdAt,omitempty"`
+	StorageClassName   string            `json:"storageClassname,omitempty"`
+	StatefulSetName    string            `json:"statefulSetName,omitempty"`
+	StatefulSetService string            `json:"statefulSetService,omitempty"`
+	HeketiClusterID    string            `json:"heketiClusterId,omitempty"`
+	PodMappings        map[string]string `json:"podMappings,omitempty"`
 }

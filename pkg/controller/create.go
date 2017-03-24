@@ -12,6 +12,7 @@ import (
 	"github.com/appscode/log"
 	heketiapi "github.com/heketi/heketi/pkg/glusterfs/api"
 	kapi "k8s.io/kubernetes/pkg/api"
+	k8serrors "k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/api/unversioned"
 	"k8s.io/kubernetes/pkg/apis/apps"
 	"k8s.io/kubernetes/pkg/apis/storage"
@@ -28,7 +29,7 @@ var (
 		1,                      // this port is needed to connect with glusterfs as volume for others
 		111, 24007, 1110, 2049, // mandatory ports
 		49152, 49153, 49154, 49155, 49156, 49157, 49158, 49159, 49160, // bricks ports
-		38465, 38466, 38467, 38468, 38469, 38470, 38471, 38472, 38473, // nfs server ports
+		// 38465, 38466, 38467, 38468, 38469, 38470, 38471, 38472, 38473, // nfs server ports
 	}
 )
 
@@ -54,6 +55,10 @@ func (c *Controller) create(obj interface{}) {
 
 			if err := c.addStorageClass(context, gfs); err != nil {
 				log.Errorln("Failed to Create StorageClass, cause", err)
+				return
+			}
+			if err := c.updateStatus(context, gfs); err != nil {
+				log.Errorln("Failed to Update GlusterFS Specs, cause", err)
 				return
 			}
 		} else {
@@ -83,10 +88,11 @@ func (c *Controller) createServiceDomain(ctx *options, gfs *api.Glusterfs) error
 		},
 	}
 
-	_, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
+	svc, err := c.Client.Core().Services(gfs.Namespace).Create(svc)
 	if err != nil {
 		return err
 	}
+	ctx.heketiOptions.StatefulSetService = svc.Name
 	return nil
 }
 
@@ -167,10 +173,11 @@ func (c *Controller) createStatefulSet(ctx *options, gfs *api.Glusterfs) error {
 		},
 	}
 
-	_, err := c.Client.Apps().StatefulSets(gfs.Namespace).Create(statefulSet)
-	if err != nil {
+	statefulSet, err := c.Client.Apps().StatefulSets(gfs.Namespace).Create(statefulSet)
+	if err != nil && k8serrors.IsAlreadyExists(err) {
 		return err
 	}
+	ctx.heketiOptions.StatefulSetName = statefulSet.Name
 	return nil
 }
 
@@ -191,15 +198,15 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 		}
 	}()
 	log.Infoln("Cluster Created, Cluster ID", cluster.Id)
-	ctx.heketiOptions.ClusterID = cluster.Id
+	ctx.heketiOptions.HeketiClusterID = cluster.Id
 	pods, err := c.Client.Core().Pods(gfs.Namespace).List(kapi.ListOptions{
 		LabelSelector: labels.SelectorFromSet(getSelectorLabels(gfs)),
 	})
 
-	ctx.heketiOptions.NodeIDMap = make(map[string]string)
+	ctx.heketiOptions.PodMappings = make(map[string]string)
 	for {
 		for _, pod := range pods.Items {
-			if _, ok := ctx.heketiOptions.NodeIDMap[pod.Name]; !ok {
+			if _, ok := ctx.heketiOptions.PodMappings[pod.Name]; !ok {
 				fqdn := strings.Join([]string{
 					pod.Name,
 					GlusterFSResourcePrefix + gfs.Name,
@@ -224,17 +231,17 @@ func (c *Controller) addNewHeketiCluster(ctx *options, gfs *api.Glusterfs) error
 					log.Infoln("Add Node Failed with reason", err)
 					continue
 				}
-				ctx.heketiOptions.NodeIDMap[pod.Name] = node.Id
+				ctx.heketiOptions.PodMappings[pod.Name] = node.Id
 			}
 		}
-		if len(ctx.heketiOptions.NodeIDMap) == len(pods.Items) {
+		if len(ctx.heketiOptions.PodMappings) == len(pods.Items) {
 			break
 		}
 		log.Infoln("All Node not added, retring...")
 		time.Sleep(time.Second * 20)
 	}
 
-	for _, v := range ctx.heketiOptions.NodeIDMap {
+	for _, v := range ctx.heketiOptions.PodMappings {
 		deviceAddReq := &heketiapi.DeviceAddRequest{
 			Device: heketiapi.Device{Name: "/storage"},
 			NodeId: v,
@@ -266,10 +273,11 @@ func (c *Controller) addStorageClass(ctx *options, gfs *api.Glusterfs) error {
 		},
 	}
 
-	_, err := c.Client.Storage().StorageClasses().Create(sc)
+	sc, err := c.Client.Storage().StorageClasses().Create(sc)
 	if err != nil {
 		return err
 	}
+	ctx.heketiOptions.StorageClassName = sc.Name
 	return nil
 }
 
@@ -303,6 +311,26 @@ func (c *Controller) waitForPodsToRun(ctx *options, gfs *api.Glusterfs) {
 		break
 	}
 	time.Sleep(time.Second * 20)
+}
+
+func (c *Controller) updateStatus(ctx *options, gfs *api.Glusterfs) error {
+	gluster, err := c.ExtClient.Glusterfs(gfs.Namespace).Get(gfs.Name)
+	if err != nil {
+		return err
+	}
+	gluster.Status = api.GlusterFSStatus{
+		CreatedAt:          time.Now(),
+		StorageClassName:   ctx.heketiOptions.StorageClassName,
+		StatefulSetName:    ctx.heketiOptions.StatefulSetName,
+		StatefulSetService: ctx.heketiOptions.StatefulSetService,
+		HeketiClusterID:    ctx.heketiOptions.HeketiClusterID,
+		PodMappings:        ctx.heketiOptions.PodMappings,
+	}
+	_, err = c.ExtClient.Glusterfs(gluster.Namespace).Update(gluster)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Controller) validate(ctx *options, gfs *api.Glusterfs) bool {
