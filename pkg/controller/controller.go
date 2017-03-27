@@ -16,6 +16,7 @@ import (
 	"k8s.io/kubernetes/pkg/runtime"
 	"k8s.io/kubernetes/pkg/util/wait"
 	"k8s.io/kubernetes/pkg/watch"
+	"net"
 )
 
 type Controller struct {
@@ -62,10 +63,17 @@ func NewController(c *Config) *Controller {
 	if err != nil {
 		log.Fatalln("Failed to load Heketi service, cause", err)
 	}
-	if len(svc.Spec.ClusterIP) == 0 {
-		log.Fatal("Service do not have a IP yet")
+	if svc.Spec.Type == kapi.ServiceTypeLoadBalancer {
+		if len(svc.Status.LoadBalancer.Ingress) > 0 {
+			ctrl.config.heketiServiceIP = svc.Status.LoadBalancer.Ingress[0].IP
+		}
+	} else if len(svc.Spec.ClusterIP) > 0 {
+		ctrl.config.heketiServiceIP = svc.Spec.ClusterIP
 	}
-	ctrl.config.heketiServiceIP = svc.Spec.ClusterIP
+
+	if len(ctrl.config.heketiServiceIP) == 0 {
+		log.Fatalln("No Service IP is found. Exiting...")
+	}
 
 	return ctrl
 }

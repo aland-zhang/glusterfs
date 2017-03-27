@@ -36,6 +36,10 @@ var (
 func (c *Controller) create(obj interface{}) {
 	context := &options{}
 	if gfs, ok := obj.(*api.Glusterfs); ok {
+		if !gfs.Status.CreatedAt.IsZero() {
+			log.Infoln("GlusterFS is already created. Skipping")
+			return
+		}
 		if c.validate(context, gfs) {
 			// The Service Must Create Before The StatefulSet
 			if err := c.createServiceDomain(context, gfs); err != nil {
